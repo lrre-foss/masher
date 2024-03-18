@@ -13,15 +13,18 @@
 #endif
 
 #include "masher/RobloxMesh.hpp"
+#include "RobloxMesh.hpp"
 
-RobloxMesh::RobloxMesh(const char* data) : loaded(false)
+namespace masher {
+
+RobloxMesh::RobloxMesh(const char* data) : hasLoaded(false)
 {
-    loaded = load(data, true);
+    hasLoaded = load(data, true);
 }
 
-RobloxMesh::RobloxMesh(const char* data, RobloxMeshVersion version) : version(version), loaded(false)
+RobloxMesh::RobloxMesh(const char* data, RobloxMeshVersion version) : version(version), hasLoaded(false)
 {
-    loaded = load(data, false);
+    hasLoaded = load(data, false);
 }
 
 bool RobloxMesh::load(const char* data, bool detect)
@@ -230,3 +233,5 @@ void RobloxMesh::writeV4(std::ostringstream& stream)
 {
 
 }
+
+} // namespace masher

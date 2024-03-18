@@ -19,6 +19,8 @@
     #define MASHER_LIB_API
 #endif
 
+namespace masher {
+
 enum RobloxMeshVersion
 {
     ROBLOX_MESH_V1_00 = 1,
@@ -83,6 +85,11 @@ struct RobloxMeshVertex
     float   tu, tv;          // UV Texture Coordinates
 
     int8_t  tx, ty, tz, ts;  // Tangent Vector & Bi-Normal Direction
+};
+
+// Introduced sometime in Version 2.00
+struct RobloxMeshVertexRGBA : RobloxMeshVertex
+{
     uint8_t r, g, b, a;      // RGBA Color Tinting
 };
 
@@ -199,19 +206,24 @@ struct RobloxMeshThreePoseCorrective
     uint16_t controlIndex2;
 };
 
-struct MASHER_LIB_API RobloxMesh
+class MASHER_LIB_API RobloxMesh
 {
+public:
     std::vector<RobloxMeshVertex>* vertices;
     std::vector<RobloxMeshFace>*   faces;
     std::vector<uint32_t>*         lods;
     std::vector<RobloxMeshBone>*   bones;
-    std::vector<uint8_t>*          nameTable;
+    std::vector<uint8_t>*          boneNameTable;
     std::vector<RobloxMeshSubset>* subsets;
-    std::vector<uint8_t>*          facsDataBuffer;
+    std::vector<uint8_t>*          facs;
 
     RobloxMeshVersion version;
 
-    bool isLoaded() { return loaded; }
+    bool isLoaded() { return hasLoaded; }
+    bool hasRgbaData() { return isRgbaDataPresent; }
+    bool hasLodData() { return lods != nullptr; }
+    bool hasBones() { return bones != nullptr || boneNameTable != nullPtr; || subsets != nullptr; }
+    bool hasFacsData() { return facs != nullptr; }
 
     RobloxMesh(const char* data);
     RobloxMesh(const char* data, RobloxMeshVersion version);
@@ -219,7 +231,9 @@ struct MASHER_LIB_API RobloxMesh
     std::string write();
 
 private:
-    bool loaded;
+    bool isRgbaDataPresent = false;
+
+    bool hasLoaded;
     bool load(const char* data, bool detect = false);
 
     // v1.00, v1.01
@@ -238,3 +252,5 @@ private:
     bool loadV4(std::istringstream& stream);
     void writeV4(std::ostringstream& stream);
 };
+
+} // namespace masher

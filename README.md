@@ -8,16 +8,16 @@
 
 Roblox mesh loader
 
-Supports the following mesh versions:
+masher currently supports the following mesh versions:
 
 - Version 1.00
 - Version 1.01
-- Version 2.00
-- Version 3.00
-- Version 3.01
-- Version 4.00
-- Version 4.01
-- Version 5.00
+- Version 2.00 (WIP)
+- Version 3.00 (WIP)
+- Version 3.01 (WIP)
+- Version 4.00 (WIP)
+- Version 4.01 (WIP)
+- Version 5.00 (WIP)
 
 Version 6.00 and version 7.00 are currently unsupported at this time.
 
@@ -29,6 +29,33 @@ masher is available both as a CLI app as well as a standalone library for embedd
 mkdir cmake && cd cmake
 cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo
 cmake --build . --config RelWithDebInfo
+```
+
+### Usage
+
+Below is an example of loading converting a version 5.00 mesh file to version 4.00 using masher.
+
+```cpp
+#include <masher/RobloxMesh.hpp>
+
+masher::RobloxMesh* mesh = new masher::RobloxMesh(data, masher::VERSION_5_00);
+
+if (!mesh->isLoaded()) {
+    printf("Failed to load mesh!\n");
+    return;
+}
+
+printf("Succesfully loaded %d faces, %d vertices, and %d bones!\n", mesh->faces->size(), mesh->vertices->size(), mesh->bones->size());
+
+if (mesh->hasFacsData()) {
+    printf("Mesh has facial animation data! Will be lost during conversion.\n");
+}
+
+// Convert!
+mesh->version = masher::VERSION_4_00;
+std::string data = mesh->write();
+
+printf("Successfully converted v5.00 mesh to v4.00!\n");
 ```
 
 ## License

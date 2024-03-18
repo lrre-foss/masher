@@ -27,7 +27,7 @@ int main(int argc, char** argv)
     std::stringstream buffer;
     buffer << file.rdbuf();
 
-    RobloxMesh* mesh = new RobloxMesh(buffer.str().c_str());
+    masher::RobloxMesh* mesh = new masher::RobloxMesh(buffer.str().c_str());
 
     if (!mesh->isLoaded())
     {
@@ -38,17 +38,17 @@ int main(int argc, char** argv)
     std::cout << "Successfully loaded mesh!" << std::endl;
 
     std::cout << "Version: ";
-    if (mesh->version == ROBLOX_MESH_V1_00)
+    if (mesh->version == masher::ROBLOX_MESH_V1_00)
         std::cout << "1.00" << std::endl;
-    else if (mesh->version == ROBLOX_MESH_V1_01)
+    else if (mesh->version == masher::ROBLOX_MESH_V1_01)
         std::cout << "1.01" << std::endl;
-    else if (mesh->version == ROBLOX_MESH_V2_00)
+    else if (mesh->version == masher::ROBLOX_MESH_V2_00)
         std::cout << "2.00" << std::endl;
-    else if (mesh->version == ROBLOX_MESH_V3_00)
+    else if (mesh->version == masher::ROBLOX_MESH_V3_00)
         std::cout << "3.00" << std::endl;
-    else if (mesh->version == ROBLOX_MESH_V4_00)
+    else if (mesh->version == masher::ROBLOX_MESH_V4_00)
         std::cout << "4.00" << std::endl;
-    else if (mesh->version == ROBLOX_MESH_V5_00)
+    else if (mesh->version == masher::ROBLOX_MESH_V5_00)
         std::cout << "5.00" << std::endl;
 
     std::cout << "Loaded " << mesh->vertices->size() << " vertices and " << mesh->faces->size() << " faces" << std::endl;
