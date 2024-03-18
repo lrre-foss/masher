@@ -8,7 +8,7 @@
 
 Roblox mesh loader
 
-It can convert over 40+ different 3D file formats to the following Roblox mesh file formats (and vice versa):
+Supports the following mesh versions:
 
 - Version 1.00
 - Version 1.01
@@ -35,4 +35,4 @@ cmake --build . --config RelWithDebInfo
 
 masher is licensed under the [MIT license](https://github.com/lrre-foss/masher/blob/trunk/LICENSE). A copy of it has been included with masher.
 
-masher uses [assimp](https://github.com/assimp/assimp) to process non-Roblox mesh formats. masher's Roblox mesh loader is based upon [MaximumADHD's Roblox Mesh Format documentation](https://devforum.roblox.com/t/roblox-mesh-format/326114).
+masher's Roblox mesh loader is based upon [MaximumADHD's Roblox Mesh Format documentation](https://devforum.roblox.com/t/roblox-mesh-format/326114).
