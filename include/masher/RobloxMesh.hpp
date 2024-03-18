@@ -199,7 +199,8 @@ struct RobloxMeshThreePoseCorrective
     uint16_t controlIndex2;
 };
 
-struct MASHER_LIB_API RobloxMesh {
+struct MASHER_LIB_API RobloxMesh
+{
     std::vector<RobloxMeshVertex>* vertices;
     std::vector<RobloxMeshFace>*   faces;
     std::vector<uint32_t>*         lods;
