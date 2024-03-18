@@ -31,52 +31,70 @@ bool RobloxMesh::load(const char* data, bool detect)
         if (strlen(data) < 13)
             return false;
 
-        std::map<std::string, RobloxMeshVersion> versions = {
-            { "version 1.00\n", ROBLOX_MESH_V1_00 },
-            { "version 1.01\n", ROBLOX_MESH_V1_01 },
-            { "version 2.00\n", ROBLOX_MESH_V2_00 },
-            { "version 3.00\n", ROBLOX_MESH_V3_00 },
-            { "version 4.00\n", ROBLOX_MESH_V4_00 },
-            { "version 5.00\n", ROBLOX_MESH_V5_00 }
-        };
-
         std::string version = std::string(data).substr(0, 13);
 
-        if (versions.count(version) == 0)
+        if (version == "version 1.00\n")
+            this->version = ROBLOX_MESH_V1_00;
+        else if (version == "version 1.01\n")
+            this->version = ROBLOX_MESH_V1_01;
+        else if (version == "version 2.00\n")
+            this->version = ROBLOX_MESH_V2_00;
+        else if (version == "version 3.00\n")
+            this->version = ROBLOX_MESH_V3_00;
+        else if (version == "version 4.00\n")
+            this->version = ROBLOX_MESH_V4_00;
+        else if (version == "version 5.00\n")
+            this->version = ROBLOX_MESH_V5_00;
+        else
             return false;
-        
-        this->version = versions[version];
     }
-
-    std::map<RobloxMeshVersion, Loader> loaders = {
-        { ROBLOX_MESH_V1_00, &RobloxMesh::loadV1 },
-        { ROBLOX_MESH_V1_01, &RobloxMesh::loadV1 },
-        { ROBLOX_MESH_V2_00, &RobloxMesh::loadV2 },
-        { ROBLOX_MESH_V3_00, &RobloxMesh::loadV3 },
-        { ROBLOX_MESH_V4_00, &RobloxMesh::loadV4 },
-        { ROBLOX_MESH_V5_00, &RobloxMesh::loadV5 }
-    };
 
     std::istringstream stream(data);
     stream.ignore(13); // "version x.xx\n"
 
-    return (this->*loaders[this->version])(stream);
+    switch (this->version)
+    {
+        case ROBLOX_MESH_V1_00:
+        case ROBLOX_MESH_V1_01:
+            return loadV1(data);
+        case ROBLOX_MESH_V2_00:
+            return loadV2(data);
+        case ROBLOX_MESH_V3_00:
+            return loadV3(data);
+        case ROBLOX_MESH_V4_00:
+            return loadV4(data);
+        case ROBLOX_MESH_V5_00:
+            return loadV5(data);
+        default:
+            return false;
+    }
 }
 
 std::string RobloxMesh::write()
 {
     std::ostringstream stream(std::ios::binary);
 
-    std::map<RobloxMeshVersion, Writer> writers = {
-        { ROBLOX_MESH_V1_00, &RobloxMesh::writeV1 },
-        { ROBLOX_MESH_V1_01, &RobloxMesh::writeV1 },
-        { ROBLOX_MESH_V2_00, &RobloxMesh::writeV2 },
-        { ROBLOX_MESH_V3_00, &RobloxMesh::writeV3 },
-        { ROBLOX_MESH_V4_00, &RobloxMesh::writeV4 },
-        { ROBLOX_MESH_V5_00, &RobloxMesh::writeV5 }
-    };
-
-    (this->*writers[this->version])(stream);
+    switch (this->version)
+    {
+        case ROBLOX_MESH_V1_00:
+        case ROBLOX_MESH_V1_01:
+            writeV1(stream);
+            break;
+        case ROBLOX_MESH_V2_00:
+            writeV2(stream);
+            break;
+        case ROBLOX_MESH_V3_00:
+            writeV3(stream);
+            break;
+        case ROBLOX_MESH_V4_00:
+            writeV4(stream);
+            break;
+        case ROBLOX_MESH_V5_00:
+            writeV5(stream);
+            break;
+        default:
+            return "";
+    }
 
     return stream.str();
 }

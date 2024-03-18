@@ -165,12 +165,12 @@ struct RobloxMeshFacsData
     uint32_t sizeof_twoPoseCorrectivesBuffer;
     uint32_t sizeof_threePoseCorrectivesBuffer;
 
-    std::vector<uint8_t> faceBoneNamesBuffer;        // sizeof(faceBoneNamesBuffer) == sizeof_faceBoneNamesBuffer
-    std::vector<uint8_t> faceControlNamesBuffer;     // sizeof(faceControlNamesBuffer) == sizeof_faceControlNamesBuffer
-    std::vector<uint8_t> quantizedTransformsBuffer;  // sizeof(quantizedTransformsBuffer) == sizeof_quantizedTransformsBuffer
+    uint8_t* faceBoneNamesBuffer;        // sizeof(faceBoneNamesBuffer) == sizeof_faceBoneNamesBuffer
+    uint8_t* faceControlNamesBuffer;     // sizeof(faceControlNamesBuffer) == sizeof_faceControlNamesBuffer
+    uint8_t* quantizedTransformsBuffer;  // sizeof(quantizedTransformsBuffer) == sizeof_quantizedTransformsBuffer
 
-    std::vector<uint8_t> twoPoseCorrectivesBuffer;   // sizeof(twoPoseCorrectivesBuffer) == sizeof_twoPoseCorrectivesBuffer
-    std::vector<uint8_t> threePoseCorrectivesBuffer; // sizeof(threePoseCorrectivesBuffer) == sizeof_threePoseCorrectivesBuffer
+    uint8_t* twoPoseCorrectivesBuffer;   // sizeof(twoPoseCorrectivesBuffer) == sizeof_twoPoseCorrectivesBuffer
+    uint8_t* threePoseCorrectivesBuffer; // sizeof(threePoseCorrectivesBuffer) == sizeof_threePoseCorrectivesBuffer
 };
 
 // Introduced in Version 5.00
@@ -236,33 +236,15 @@ private:
     bool loaded;
     bool load(const char* data, bool detect = false);
 
-    typedef bool (RobloxMesh::*Loader)(std::istringstream&);
     bool loadV1(std::istringstream& stream);
-
-    typedef bool (RobloxMesh::*Loader)(std::istringstream&);
     bool loadV2(std::istringstream& stream);
-
-    typedef bool (RobloxMesh::*Loader)(std::istringstream&);
     bool loadV3(std::istringstream& stream);
-
-    typedef bool (RobloxMesh::*Loader)(std::istringstream&);
     bool loadV4(std::istringstream& stream);
-
-    typedef bool (RobloxMesh::*Loader)(std::istringstream&);
     bool loadV5(std::istringstream& stream);
 
-    typedef void (RobloxMesh::*Writer)(std::ostringstream&);
     void writeV1(std::ostringstream& stream);
-
-    typedef void (RobloxMesh::*Writer)(std::ostringstream&);
     void writeV2(std::ostringstream& stream);
-
-    typedef void (RobloxMesh::*Writer)(std::ostringstream&);
     void writeV3(std::ostringstream& stream);
-
-    typedef void (RobloxMesh::*Writer)(std::ostringstream&);
     void writeV4(std::ostringstream& stream);
-
-    typedef void (RobloxMesh::*Writer)(std::ostringstream&);
     void writeV5(std::ostringstream& stream);
 };
