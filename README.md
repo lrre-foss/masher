@@ -42,7 +42,11 @@ if (!mesh->isLoaded()) {
     return;
 }
 
-printf("Successfully loaded %d faces, %d vertices, and %d bones!\n", mesh->faces->size(), mesh->vertices->size(), mesh->bones->size());
+int faces = mesh->faces->size();
+int vertices = mesh->vertices->size();
+int bones = mesh->bones->size();
+
+printf("Successfully loaded %d faces, %d vertices, and %d bones!\n", faces, vertices, bones);
 
 if (mesh->hasFacsData()) {
     printf("Mesh has facial animation data! Will be lost during conversion.\n");
