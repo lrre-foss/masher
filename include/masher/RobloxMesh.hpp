@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <cassert>
+#include <map>
 #include <string>
 #include <sstream>
 #include <vector>
@@ -223,24 +224,45 @@ struct MASHER_LIB_API RobloxMesh {
     std::vector<uint8_t>*          facsDataBuffer;
 
     RobloxMeshVersion version;
+
     bool isLoaded() { return loaded; }
 
+    RobloxMesh(const char* data);
     RobloxMesh(const char* data, RobloxMeshVersion version);
 
     std::string write();
 
 private:
     bool loaded;
+    bool load(const char* data, bool detect = false);
 
-    bool loadV1(const char* data);
-    bool loadV2(const char* data);
-    bool loadV3(const char* data);
-    bool loadV4(const char* data);
-    bool loadV5(const char* data);
+    typedef bool (RobloxMesh::*Loader)(std::istringstream&);
+    bool loadV1(std::istringstream& stream);
 
+    typedef bool (RobloxMesh::*Loader)(std::istringstream&);
+    bool loadV2(std::istringstream& stream);
+
+    typedef bool (RobloxMesh::*Loader)(std::istringstream&);
+    bool loadV3(std::istringstream& stream);
+
+    typedef bool (RobloxMesh::*Loader)(std::istringstream&);
+    bool loadV4(std::istringstream& stream);
+
+    typedef bool (RobloxMesh::*Loader)(std::istringstream&);
+    bool loadV5(std::istringstream& stream);
+
+    typedef void (RobloxMesh::*Writer)(std::ostringstream&);
     void writeV1(std::ostringstream& stream);
+
+    typedef void (RobloxMesh::*Writer)(std::ostringstream&);
     void writeV2(std::ostringstream& stream);
+
+    typedef void (RobloxMesh::*Writer)(std::ostringstream&);
     void writeV3(std::ostringstream& stream);
+
+    typedef void (RobloxMesh::*Writer)(std::ostringstream&);
     void writeV4(std::ostringstream& stream);
+
+    typedef void (RobloxMesh::*Writer)(std::ostringstream&);
     void writeV5(std::ostringstream& stream);
 };
