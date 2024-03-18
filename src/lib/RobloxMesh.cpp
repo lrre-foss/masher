@@ -65,9 +65,8 @@ bool RobloxMesh::load(const char* data, bool detect)
         case ROBLOX_MESH_V3_00:
             return loadV3(stream);
         case ROBLOX_MESH_V4_00:
-            return loadV4(stream);
         case ROBLOX_MESH_V5_00:
-            return loadV5(stream);
+            return loadV4(stream);
         default:
             return false;
     }
@@ -90,10 +89,8 @@ std::string RobloxMesh::write()
             writeV3(stream);
             break;
         case ROBLOX_MESH_V4_00:
-            writeV4(stream);
-            break;
         case ROBLOX_MESH_V5_00:
-            writeV5(stream);
+            writeV4(stream);
             break;
         default:
             return "";
@@ -231,16 +228,6 @@ bool RobloxMesh::loadV4(std::istringstream& stream)
 }
 
 void RobloxMesh::writeV4(std::ostringstream& stream)
-{
-
-}
-
-bool RobloxMesh::loadV5(std::istringstream& stream)
-{
-    return true;
-}
-
-void RobloxMesh::writeV5(std::ostringstream& stream)
 {
 
 }

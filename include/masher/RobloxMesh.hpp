@@ -236,18 +236,19 @@ private:
     bool loaded;
     bool load(const char* data, bool detect = false);
 
+    // v1.00, v1.01
     bool loadV1(std::istringstream& stream);
     void writeV1(std::ostringstream& stream);
 
+    // v2.00
     bool loadV2(std::istringstream& stream);
     void writeV2(std::ostringstream& stream);
 
+    // v3.00
     bool loadV3(std::istringstream& stream);
     void writeV3(std::ostringstream& stream);
 
+    // v4.00, v5.00
     bool loadV4(std::istringstream& stream);
     void writeV4(std::ostringstream& stream);
-
-    bool loadV5(std::istringstream& stream);
-    void writeV5(std::ostringstream& stream);
 };
