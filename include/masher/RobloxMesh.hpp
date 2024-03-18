@@ -1,0 +1,242 @@
+#pragma once
+
+#include <cstdint>
+#include <cassert>
+#include <string>
+#include <sstream>
+#include <vector>
+
+#if defined(_WIN32)
+    #ifdef MASHER_LIB_EXPORT
+        #define MASHER_LIB_API __declspec(dllexport)
+    #else
+        #define MASHER_LIB_API __declspec(dllimport)
+    #endif
+#elif defined(__GNUC__) && __GNUC__ >= 4
+    #define MASHER_LIB_API __attribute__ ((visibility("default")))
+#else
+    #define MASHER_LIB_API
+#endif
+
+enum RobloxMeshVersion
+{
+    ROBLOX_MESH_V1_00 = 1,
+    ROBLOX_MESH_V1_01 = 2,
+    ROBLOX_MESH_V2_00 = 3,
+    ROBLOX_MESH_V3_00 = 4,
+    ROBLOX_MESH_V4_00 = 5,
+    ROBLOX_MESH_V5_00 = 6,
+};
+
+struct RobloxMeshHeaderV2
+{
+    unsigned short sizeof_MeshHeader;
+    unsigned char sizeof_Vertex;
+    unsigned char sizeof_Face;
+
+    unsigned int numVerts;
+    unsigned int numFaces;
+};
+
+struct RobloxMeshHeaderV3
+{
+    uint16_t sizeof_MeshHeader;
+    uint8_t sizeof_Vertex;
+    uint8_t sizeof_Face;
+    uint16_t sizeof_LOD;
+
+    uint16_t numLODs;
+    uint32_t numVerts;
+    uint32_t numFaces;
+};
+
+struct RobloxMeshHeaderV4
+{
+    uint16_t sizeof_MeshHeader;
+    uint16_t lodType;
+
+    uint32_t numVerts;
+    uint32_t numFaces;
+
+    uint16_t numLODs;
+    uint16_t numBones;
+
+    uint32_t sizeof_boneNamesBuffer;
+    uint16_t numSubsets;
+
+    uint8_t numHighQualityLODs;
+    uint8_t unused;
+};
+
+struct RobloxMeshHeaderV5
+{
+    uint16_t sizeof_MeshHeader;
+    uint16_t lodType;
+
+    uint32_t numVerts;
+    uint32_t numFaces;
+
+    uint16_t numLODs;
+    uint16_t numBones;
+
+    uint32_t sizeof_boneNamesBuffer;
+    uint16_t numSubsets;
+
+    uint8_t numHighQualityLODs;
+    uint8_t unused;
+
+    uint32_t facsDataFormat;
+    uint32_t facsDataSize;
+};
+
+// Introduced in Version 2.00
+struct RobloxMeshVertex
+{
+    float px, py, pz;      // Position
+    float nx, ny, nz;      // Normal Vector
+    float tu, tv;          // UV Texture Coordinates
+
+    int8_t tx, ty, tz, ts; // Tangent Vector & Bi-Normal Direction
+    uint8_t r, g, b, a;    // RGBA Color Tinting
+};
+
+// Introduced in Version 2.00
+struct RobloxMeshFace
+{
+    uint32_t a; // 1st Vertex Index
+    uint32_t b; // 2nd Vertex Index
+    uint32_t c; // 3rd Vertex Index
+};
+
+// Introduced in Version 4.00
+enum RobloxMeshLodType
+{
+    NONE = 0,
+    UNKNOWN = 1,
+    ROBLOX = 2,
+    MESHOPTIMIZER = 3,
+};
+
+// Introduced in Version 4.00
+struct RobloxMeshEnvelope
+{
+    uint8_t bones[4];
+    uint8_t weights[4];
+};
+
+// Introduced in Version 4.00
+struct RobloxMeshBone
+{
+    uint32_t boneNameIndex;
+
+    uint16_t parentIndex;
+    uint16_t lodParentIndex;
+
+    float culling;
+
+    float r00, r01, r02;
+    float r10, r11, r12;
+    float r20, r21, r22;
+
+    float x, y, z;
+};
+
+// Introduced in Version 4.00
+struct RobloxMeshSubset
+{
+    uint32_t facesBegin;
+    uint32_t facesLength;
+
+    uint32_t vertsBegin;
+    uint32_t vertsLength;
+
+    uint32_t numBoneIndices;
+    uint16_t boneIndices[26];
+};
+
+// Introduced in Version 5.00
+struct RobloxMeshFacsData
+{
+    uint32_t sizeof_faceBoneNamesBuffer;
+    uint32_t sizeof_faceControlNamesBuffer;
+    uint64_t sizeof_quantizedTransformsBuffer;
+    
+    uint32_t sizeof_twoPoseCorrectivesBuffer;
+    uint32_t sizeof_threePoseCorrectivesBuffer;
+
+    std::vector<uint8_t> faceBoneNamesBuffer;        // sizeof(faceBoneNamesBuffer) == sizeof_faceBoneNamesBuffer
+    std::vector<uint8_t> faceControlNamesBuffer;     // sizeof(faceControlNamesBuffer) == sizeof_faceControlNamesBuffer
+    std::vector<uint8_t> quantizedTransformsBuffer;  // sizeof(quantizedTransformsBuffer) == sizeof_quantizedTransformsBuffer
+
+    std::vector<uint8_t> twoPoseCorrectivesBuffer;   // sizeof(twoPoseCorrectivesBuffer) == sizeof_twoPoseCorrectivesBuffer
+    std::vector<uint8_t> threePoseCorrectivesBuffer; // sizeof(threePoseCorrectivesBuffer) == sizeof_threePoseCorrectivesBuffer
+};
+
+// Introduced in Version 5.00
+struct RobloxMeshQuantizedMatrix
+{
+    uint16_t version;
+    uint32_t rows, cols;
+
+    // if version == 1 ...
+    float** v1_matrix;
+
+    // elseif version == 2 ...
+    float v2_min, v2_max;    
+    uint16_t** v2_matrix;
+};
+
+// Introduced in Version 5.00
+struct RobloxMeshQuantizedTransforms
+{
+    RobloxMeshQuantizedMatrix px;
+    RobloxMeshQuantizedMatrix py;
+    RobloxMeshQuantizedMatrix pz;
+
+    RobloxMeshQuantizedMatrix rx;
+    RobloxMeshQuantizedMatrix ry;
+    RobloxMeshQuantizedMatrix rz;
+};
+
+// Introduced in Version 5.00
+struct RobloxMeshTwoPoseCorrective
+{
+    uint16_t controlIndex0;
+    uint16_t controlIndex1;
+};
+
+// Introduced in Version 5.00
+struct RobloxMeshThreePoseCorrective
+{
+    uint16_t controlIndex0;
+    uint16_t controlIndex1;
+    uint16_t controlIndex2;
+};
+
+struct MASHER_LIB_API RobloxMesh {
+    std::vector<RobloxMeshVertex>* vertices;
+    std::vector<RobloxMeshFace>* faces;
+    std::vector<uint32_t>* lods;
+    std::vector<RobloxMeshBone>* bones;
+    std::vector<uint8_t>* nameTable;
+    std::vector<RobloxMeshSubset>* subsets;
+    std::vector<uint8_t>* facsDataBuffer;
+    RobloxMeshVersion version;
+
+    RobloxMesh(const char* meshData, RobloxMeshVersion version);
+
+    std::string write();
+
+private:
+    void loadV1(const char* meshData);
+    void loadV2(const char* meshData);
+    void loadV3(const char* meshData);
+    void loadV4(const char* meshData);
+    void loadV5(const char* meshData);
+
+    void writeV1(std::ostringstream& oss);
+    void writeV2(std::ostringstream& oss);
+    void writeV3(std::ostringstream& oss);
+    void writeV4(std::ostringstream& oss);
+    void writeV5(std::ostringstream& oss);
+};
