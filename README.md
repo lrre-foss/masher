@@ -3,9 +3,6 @@
 [![License](https://img.shields.io/github/license/lrre-foss/masher)](https://github.com/lrre-foss/masher/blob/trunk/LICENSE)
 [![Star](https://img.shields.io/github/stars/lrre-foss/masher?style=social)](https://github.com/lrre-foss/masher/stargazers)
 
-> [!IMPORTANT]
-> This project is currently an active work-in-progress. We will not be accepting contributions at this time.
-
 Roblox mesh loader
 
 masher currently supports the following mesh versions:
@@ -45,7 +42,7 @@ if (!mesh->isLoaded()) {
     return;
 }
 
-printf("Succesfully loaded %d faces, %d vertices, and %d bones!\n", mesh->faces->size(), mesh->vertices->size(), mesh->bones->size());
+printf("Successfully loaded %d faces, %d vertices, and %d bones!\n", mesh->faces->size(), mesh->vertices->size(), mesh->bones->size());
 
 if (mesh->hasFacsData()) {
     printf("Mesh has facial animation data! Will be lost during conversion.\n");

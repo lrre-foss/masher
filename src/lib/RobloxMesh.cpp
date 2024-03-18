@@ -13,7 +13,6 @@
 #endif
 
 #include "masher/RobloxMesh.hpp"
-#include "RobloxMesh.hpp"
 
 namespace masher {
 

@@ -222,7 +222,7 @@ public:
     bool isLoaded() { return hasLoaded; }
     bool hasRgbaData() { return isRgbaDataPresent; }
     bool hasLodData() { return lods != nullptr; }
-    bool hasBones() { return bones != nullptr || boneNameTable != nullPtr; || subsets != nullptr; }
+    bool hasBones() { return bones != nullptr || boneNameTable != nullptr || subsets != nullptr; }
     bool hasFacsData() { return facs != nullptr; }
 
     RobloxMesh(const char* data);
