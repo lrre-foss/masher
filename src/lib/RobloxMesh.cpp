@@ -127,11 +127,10 @@ bool RobloxMesh::loadV1(std::istringstream& stream)
                     std::string xStr, yStr, zStr;
 
                     // read until we find a non-numeric character (so we can read exponential stuff)
-                    char ch;
-                    while (stream >> ch && !std::isdigit(ch) && ch != '-' && ch != '+')
-                        ;
-
-                    stream.unget(); // put the first digit or sign back into the stream
+                    while (std::isdigit(stream.peek()) == 0 && stream.peek() != '-' && stream.peek() != '+')
+                    {
+                        stream.ignore();
+                    }
 
                     std::getline(stream, xStr, ',');
                     std::getline(stream, yStr, ',');
