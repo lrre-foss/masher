@@ -31,12 +31,12 @@ enum RobloxMeshVersion
 
 struct RobloxMeshHeaderV2
 {
-    unsigned short sizeof_MeshHeader;
-    unsigned char  sizeof_Vertex;
-    unsigned char  sizeof_Face;
+    uint16_t sizeof_MeshHeader;
+    uint8_t  sizeof_Vertex;
+    uint8_t  sizeof_Face;
 
-    unsigned int numVerts;
-    unsigned int numFaces;
+    uint32_t numVerts;
+    uint32_t numFaces;
 };
 
 struct RobloxMeshHeaderV3
