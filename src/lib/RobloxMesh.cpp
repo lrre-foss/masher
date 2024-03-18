@@ -56,15 +56,15 @@ bool RobloxMesh::load(const char* data, bool detect)
     {
         case ROBLOX_MESH_V1_00:
         case ROBLOX_MESH_V1_01:
-            return loadV1(data);
+            return loadV1(stream);
         case ROBLOX_MESH_V2_00:
-            return loadV2(data);
+            return loadV2(stream);
         case ROBLOX_MESH_V3_00:
-            return loadV3(data);
+            return loadV3(stream);
         case ROBLOX_MESH_V4_00:
-            return loadV4(data);
+            return loadV4(stream);
         case ROBLOX_MESH_V5_00:
-            return loadV5(data);
+            return loadV5(stream);
         default:
             return false;
     }
@@ -170,29 +170,29 @@ bool RobloxMesh::loadV1(std::istringstream& stream)
     return true;
 }
 
+void RobloxMesh::writeV1(std::ostringstream& stream)
+{
+    float scale = this->version == ROBLOX_MESH_V1_00 ? 2.0f : 1.0f;
+
+    stream << (this->version == ROBLOX_MESH_V1_00 ? "version 1.00\n" : "version 1.01\n");
+    stream << this->faces->size() << "\n";
+
+    for (const RobloxMeshFace& face : *this->faces)
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            const RobloxMeshVertex& vertex = (*this->vertices)[i == 0 ? face.a : (i == 1 ? face.b : face.c)];
+
+            stream << "[" << vertex.px * scale << "," << vertex.py * scale << "," << vertex.pz * scale << "]";
+            stream << "[" << vertex.nx << "," << vertex.ny << "," << vertex.nz << "]";
+            stream << "[" << vertex.tu << "," << 1.0f - vertex.tv << ",0]";
+        }
+    }
+}
+
 bool RobloxMesh::loadV2(std::istringstream& stream)
 {
     return true;
-}
-
-bool RobloxMesh::loadV3(std::istringstream& stream)
-{
-    return true;
-}
-
-bool RobloxMesh::loadV4(std::istringstream& stream)
-{
-    return true;
-}
-
-bool RobloxMesh::loadV5(std::istringstream& stream)
-{
-    return true;
-}
-
-void RobloxMesh::writeV1(std::ostringstream& stream)
-{
-
 }
 
 void RobloxMesh::writeV2(std::ostringstream& stream)
@@ -200,14 +200,29 @@ void RobloxMesh::writeV2(std::ostringstream& stream)
 
 }
 
+bool RobloxMesh::loadV3(std::istringstream& stream)
+{
+    return true;
+}
+
 void RobloxMesh::writeV3(std::ostringstream& stream)
 {
 
 }
 
+bool RobloxMesh::loadV4(std::istringstream& stream)
+{
+    return true;
+}
+
 void RobloxMesh::writeV4(std::ostringstream& stream)
 {
 
+}
+
+bool RobloxMesh::loadV5(std::istringstream& stream)
+{
+    return true;
 }
 
 void RobloxMesh::writeV5(std::ostringstream& stream)

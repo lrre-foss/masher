@@ -237,14 +237,17 @@ private:
     bool load(const char* data, bool detect = false);
 
     bool loadV1(std::istringstream& stream);
-    bool loadV2(std::istringstream& stream);
-    bool loadV3(std::istringstream& stream);
-    bool loadV4(std::istringstream& stream);
-    bool loadV5(std::istringstream& stream);
-
     void writeV1(std::ostringstream& stream);
+
+    bool loadV2(std::istringstream& stream);
     void writeV2(std::ostringstream& stream);
+
+    bool loadV3(std::istringstream& stream);
     void writeV3(std::ostringstream& stream);
+
+    bool loadV4(std::istringstream& stream);
     void writeV4(std::ostringstream& stream);
+
+    bool loadV5(std::istringstream& stream);
     void writeV5(std::ostringstream& stream);
 };
