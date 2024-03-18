@@ -153,7 +153,6 @@ bool RobloxMesh::loadV1(std::istringstream& stream)
                     {
                         vertex.tu = x;
                         vertex.tv = 1.0f - y; // v1.xx quirk where tex_V is inverted
-                        vertex.tw = z;
                     }
                 }
 
@@ -197,7 +196,7 @@ void RobloxMesh::writeV1(std::ostringstream& stream)
 
             stream << "[" << vertex.px * scale << "," << vertex.py * scale << "," << vertex.pz * scale << "]";
             stream << "[" << vertex.nx << "," << vertex.ny << "," << vertex.nz << "]";
-            stream << "[" << vertex.tu << "," << 1.0f - vertex.tv << "," << vertex.tw << "]";
+            stream << "[" << vertex.tu << "," << 1.0f - vertex.tv << ",0]";
         }
     }
 }
