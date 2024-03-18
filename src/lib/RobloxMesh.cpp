@@ -12,7 +12,7 @@
     #define MASHER_LIB_EXPORT
 #endif
 
-#include <masher/RobloxMesh.hpp>
+#include "masher/RobloxMesh.hpp"
 
 RobloxMesh::RobloxMesh(const char* data) : loaded(false)
 {
@@ -28,29 +28,32 @@ bool RobloxMesh::load(const char* data, bool detect)
 {
     if (detect)
     {
-        if (strlen(data) < 13)
+        if (strlen(data) < 12)
             return false;
 
-        std::string version = std::string(data).substr(0, 13);
+        std::string version = std::string(data).substr(0, 12);
 
-        if (version == "version 1.00\n")
+        if (version == "version 1.00")
             this->version = ROBLOX_MESH_V1_00;
-        else if (version == "version 1.01\n")
+        else if (version == "version 1.01")
             this->version = ROBLOX_MESH_V1_01;
-        else if (version == "version 2.00\n")
+        else if (version == "version 2.00")
             this->version = ROBLOX_MESH_V2_00;
-        else if (version == "version 3.00\n")
+        else if (version == "version 3.00")
             this->version = ROBLOX_MESH_V3_00;
-        else if (version == "version 4.00\n")
+        else if (version == "version 4.00")
             this->version = ROBLOX_MESH_V4_00;
-        else if (version == "version 5.00\n")
+        else if (version == "version 5.00")
             this->version = ROBLOX_MESH_V5_00;
         else
             return false;
     }
 
     std::istringstream stream(data);
-    stream.ignore(13); // "version x.xx\n"
+
+    // Ignore version header
+    std::string dummy;
+    std::getline(stream, dummy);
 
     switch (this->version)
     {
@@ -106,65 +109,78 @@ bool RobloxMesh::loadV1(std::istringstream& stream)
     this->vertices = new std::vector<RobloxMeshVertex>();
     this->faces = new std::vector<RobloxMeshFace>();
 
-    int faces;
-    stream >> faces;
-
-    for (int i = 0; i < faces; i++)
+    try
     {
-        RobloxMeshFace face;
+        int faces;
+        stream >> faces;
 
-        // 3 vertices per face
-        for (int j = 0; j < 3; j++)
+        for (int i = 0; i < faces; i++)
         {
-            RobloxMeshVertex vertex;
-            for (int k = 0; k < 3; k++)
+            RobloxMeshFace face;
+
+            // 3 vertices per face
+            for (int j = 0; j < 3; j++)
             {
-                std::string vector3;
-                stream >> vector3;
-                vector3 = vector3.substr(1, vector3.size() - 2);
-
-                std::istringstream iss(vector3);
-                std::string val;
-
-                std::getline(iss, val, ',');
-                float x = std::stof(val);
-
-                std::getline(iss, val, ',');
-                float y = std::stof(val);
-
-                std::getline(iss, val, ',');
-                float z = std::stof(val);
-
-                if (k == 0)
+                RobloxMeshVertex vertex;
+                for (int k = 0; k < 3; k++)
                 {
-                    vertex.px = x * scale;
-                    vertex.py = y * scale;
-                    vertex.pz = z * scale;
+                    std::string xStr, yStr, zStr;
+
+                    // read until we find a non-numeric character (so we can read exponential stuff)
+                    char ch;
+                    while (stream >> ch && !std::isdigit(ch) && ch != '-' && ch != '+')
+                        ;
+
+                    stream.unget(); // put the first digit or sign back into the stream
+
+                    std::getline(stream, xStr, ',');
+                    std::getline(stream, yStr, ',');
+                    std::getline(stream, zStr, ']');
+
+                    float x = std::stof(xStr);
+                    float y = std::stof(yStr);
+                    float z = std::stof(zStr);
+
+                    if (k == 0)
+                    {
+                        vertex.px = x * scale;
+                        vertex.py = y * scale;
+                        vertex.pz = z * scale;
+                    }
+                    else if (k == 1)
+                    {
+                        vertex.nx = x;
+                        vertex.ny = y;
+                        vertex.nz = z;
+                    }
+                    else
+                    {
+                        vertex.tu = x;
+                        vertex.tv = 1.0f - y; // v1.xx quirk where tex_V is inverted
+                        vertex.tw = z;
+                    }
                 }
-                else if (k == 1)
-                {
-                    vertex.nx = x;
-                    vertex.ny = y;
-                    vertex.nz = z;
-                }
+
+                this->vertices->push_back(vertex);
+
+                if (j == 0)
+                    face.a = static_cast<uint32_t>(vertices->size() - 1);
+                else if (j == 1)
+                    face.b = static_cast<uint32_t>(vertices->size() - 1);
                 else
-                {
-                    vertex.tu = x;
-                    vertex.tv = 1.0f - y; // v1.xx quirk where tex_V is inverted
-                }
+                    face.c = static_cast<uint32_t>(vertices->size() - 1);
             }
 
-            this->vertices->push_back(vertex);
-
-            if (j == 0)
-                face.a = static_cast<uint32_t>(vertices->size() - 1);
-            else if (j == 1)
-                face.b = static_cast<uint32_t>(vertices->size() - 1);
-            else
-                face.c = static_cast<uint32_t>(vertices->size() - 1);
+            this->faces->push_back(face);
         }
+    }
+    catch (std::exception& e)
+    {
+#ifdef _DEBUG
+        throw e;
+#endif
 
-        this->faces->push_back(face);
+        return false;
     }
 
     return true;
@@ -174,8 +190,8 @@ void RobloxMesh::writeV1(std::ostringstream& stream)
 {
     float scale = this->version == ROBLOX_MESH_V1_00 ? 2.0f : 1.0f;
 
-    stream << (this->version == ROBLOX_MESH_V1_00 ? "version 1.00\n" : "version 1.01\n");
-    stream << this->faces->size() << "\n";
+    stream << (this->version == ROBLOX_MESH_V1_00 ? "version 1.00" : "version 1.01") << std::endl;
+    stream << this->faces->size() << std::endl;
 
     for (const RobloxMeshFace& face : *this->faces)
     {
@@ -185,7 +201,7 @@ void RobloxMesh::writeV1(std::ostringstream& stream)
 
             stream << "[" << vertex.px * scale << "," << vertex.py * scale << "," << vertex.pz * scale << "]";
             stream << "[" << vertex.nx << "," << vertex.ny << "," << vertex.nz << "]";
-            stream << "[" << vertex.tu << "," << 1.0f - vertex.tv << ",0]";
+            stream << "[" << vertex.tu << "," << 1.0f - vertex.tv << "," << vertex.tw << "]";
         }
     }
 }

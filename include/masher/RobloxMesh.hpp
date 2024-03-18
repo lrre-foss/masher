@@ -95,7 +95,7 @@ struct RobloxMeshVertex
 {
     float   px, py, pz;      // Position
     float   nx, ny, nz;      // Normal Vector
-    float   tu, tv;          // UV Texture Coordinates
+    float   tu, tv, tw;      // UV Texture Coordinates
 
     int8_t  tx, ty, tz, ts;  // Tangent Vector & Bi-Normal Direction
     uint8_t r, g, b, a;      // RGBA Color Tinting
