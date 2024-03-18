@@ -63,4 +63,4 @@ printf("Successfully converted v5.00 mesh to v4.00!\n");
 
 masher is licensed under the [MIT license](https://github.com/lrre-foss/masher/blob/trunk/LICENSE). A copy of it has been included with masher.
 
-masher's Roblox mesh loader is based upon [MaximumADHD's Roblox Mesh Format documentation](https://devforum.roblox.com/t/roblox-mesh-format/326114).
+masher was written using [MaximumADHD's Roblox Mesh Format documentation](https://devforum.roblox.com/t/roblox-mesh-format/326114) as a reference for reading and writing Roblox mesh file data.
