@@ -31,8 +31,8 @@ enum RobloxMeshVersion
 struct RobloxMeshHeaderV2
 {
     unsigned short sizeof_MeshHeader;
-    unsigned char sizeof_Vertex;
-    unsigned char sizeof_Face;
+    unsigned char  sizeof_Vertex;
+    unsigned char  sizeof_Face;
 
     unsigned int numVerts;
     unsigned int numFaces;
@@ -41,8 +41,8 @@ struct RobloxMeshHeaderV2
 struct RobloxMeshHeaderV3
 {
     uint16_t sizeof_MeshHeader;
-    uint8_t sizeof_Vertex;
-    uint8_t sizeof_Face;
+    uint8_t  sizeof_Vertex;
+    uint8_t  sizeof_Face;
     uint16_t sizeof_LOD;
 
     uint16_t numLODs;
@@ -64,8 +64,8 @@ struct RobloxMeshHeaderV4
     uint32_t sizeof_boneNamesBuffer;
     uint16_t numSubsets;
 
-    uint8_t numHighQualityLODs;
-    uint8_t unused;
+    uint8_t  numHighQualityLODs;
+    uint8_t  unused;
 };
 
 struct RobloxMeshHeaderV5
@@ -82,8 +82,8 @@ struct RobloxMeshHeaderV5
     uint32_t sizeof_boneNamesBuffer;
     uint16_t numSubsets;
 
-    uint8_t numHighQualityLODs;
-    uint8_t unused;
+    uint8_t  numHighQualityLODs;
+    uint8_t  unused;
 
     uint32_t facsDataFormat;
     uint32_t facsDataSize;
@@ -92,12 +92,12 @@ struct RobloxMeshHeaderV5
 // Introduced in Version 2.00
 struct RobloxMeshVertex
 {
-    float px, py, pz;      // Position
-    float nx, ny, nz;      // Normal Vector
-    float tu, tv;          // UV Texture Coordinates
+    float   px, py, pz;      // Position
+    float   nx, ny, nz;      // Normal Vector
+    float   tu, tv;          // UV Texture Coordinates
 
-    int8_t tx, ty, tz, ts; // Tangent Vector & Bi-Normal Direction
-    uint8_t r, g, b, a;    // RGBA Color Tinting
+    int8_t  tx, ty, tz, ts;  // Tangent Vector & Bi-Normal Direction
+    uint8_t r, g, b, a;      // RGBA Color Tinting
 };
 
 // Introduced in Version 2.00
@@ -111,9 +111,9 @@ struct RobloxMeshFace
 // Introduced in Version 4.00
 enum RobloxMeshLodType
 {
-    NONE = 0,
-    UNKNOWN = 1,
-    ROBLOX = 2,
+    NONE          = 0,
+    UNKNOWN       = 1,
+    ROBLOX        = 2,
     MESHOPTIMIZER = 3,
 };
 
@@ -178,11 +178,11 @@ struct RobloxMeshQuantizedMatrix
     uint16_t version;
     uint32_t rows, cols;
 
-    // if version == 1 ...
-    float** v1_matrix;
+    // version == 1
+    float**    v1_matrix;
 
-    // elseif version == 2 ...
-    float v2_min, v2_max;    
+    // version == 2
+    float      v2_min, v2_max;
     uint16_t** v2_matrix;
 };
 
@@ -215,28 +215,32 @@ struct RobloxMeshThreePoseCorrective
 
 struct MASHER_LIB_API RobloxMesh {
     std::vector<RobloxMeshVertex>* vertices;
-    std::vector<RobloxMeshFace>* faces;
-    std::vector<uint32_t>* lods;
-    std::vector<RobloxMeshBone>* bones;
-    std::vector<uint8_t>* nameTable;
+    std::vector<RobloxMeshFace>*   faces;
+    std::vector<uint32_t>*         lods;
+    std::vector<RobloxMeshBone>*   bones;
+    std::vector<uint8_t>*          nameTable;
     std::vector<RobloxMeshSubset>* subsets;
-    std::vector<uint8_t>* facsDataBuffer;
-    RobloxMeshVersion version;
+    std::vector<uint8_t>*          facsDataBuffer;
 
-    RobloxMesh(const char* meshData, RobloxMeshVersion version);
+    RobloxMeshVersion version;
+    bool isLoaded() { return loaded; }
+
+    RobloxMesh(const char* data, RobloxMeshVersion version);
 
     std::string write();
 
 private:
-    void loadV1(const char* meshData);
-    void loadV2(const char* meshData);
-    void loadV3(const char* meshData);
-    void loadV4(const char* meshData);
-    void loadV5(const char* meshData);
+    bool loaded;
 
-    void writeV1(std::ostringstream& oss);
-    void writeV2(std::ostringstream& oss);
-    void writeV3(std::ostringstream& oss);
-    void writeV4(std::ostringstream& oss);
-    void writeV5(std::ostringstream& oss);
+    bool loadV1(const char* data);
+    bool loadV2(const char* data);
+    bool loadV3(const char* data);
+    bool loadV4(const char* data);
+    bool loadV5(const char* data);
+
+    void writeV1(std::ostringstream& stream);
+    void writeV2(std::ostringstream& stream);
+    void writeV3(std::ostringstream& stream);
+    void writeV4(std::ostringstream& stream);
+    void writeV5(std::ostringstream& stream);
 };
