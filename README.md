@@ -16,7 +16,7 @@ masher currently supports the following mesh versions:
 - Version 4.01 (WIP)
 - Version 5.00 (WIP)
 
-Version 6.00 and version 7.00 are currently unsupported at this time.
+Versions 6.00 and 7.00 are intentionally left unsupported due to the fact that there is no Roblox mesh file available that has been encoded in these formats; thus, there can be no documentation on how it works. 
 
 ## Building
 
