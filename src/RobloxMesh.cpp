@@ -237,7 +237,7 @@ bool RobloxMesh::loadV2(std::istringstream& stream)
 {
     lastError = ROBLOX_MESH_ERROR_UNSUPPORTED;
 
-    return true;
+    return false;
 }
 
 void RobloxMesh::writeV2(std::ostringstream& stream)
@@ -249,7 +249,7 @@ bool RobloxMesh::loadV3(std::istringstream& stream)
 {
     lastError = ROBLOX_MESH_ERROR_UNSUPPORTED;
 
-    return true;
+    return false;
 }
 
 void RobloxMesh::writeV3(std::ostringstream& stream)
@@ -261,7 +261,7 @@ bool RobloxMesh::loadV4(std::istringstream& stream)
 {
     lastError = ROBLOX_MESH_ERROR_UNSUPPORTED;
 
-    return true;
+    return false;
 }
 
 void RobloxMesh::writeV4(std::ostringstream& stream)
