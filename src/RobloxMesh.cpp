@@ -19,10 +19,13 @@ namespace masher {
 
 Error lastError = MASHER_OK;
 
-Error GetLastError()
+Error GetLoaderError(bool wipeLastError)
 {
     Error error = lastError;
-    lastError = MASHER_OK;
+
+    if (wipeLastError)
+        lastError = MASHER_OK;
+
     return error;
 }
 

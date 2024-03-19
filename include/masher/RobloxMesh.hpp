@@ -33,7 +33,7 @@ enum Error
     MASHER_LAST
 };
 
-MASHER_LIB_API extern Error GetLastError();
+MASHER_LIB_API extern Error GetLoaderError(bool wipeLastError = true);
 
 enum RobloxMeshVersion
 {

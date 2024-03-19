@@ -31,7 +31,7 @@ As of right now, you may clone a mesh file using the mesher CLI by running `./ma
 
 masher::RobloxMesh* mesh = new masher::RobloxMesh(file->getData());
 
-if (!mesh->isLoaded() || (error = masher::GetLastError()) != masher::MASHER_OK) {
+if (!mesh->isLoaded() || (error = masher::GetLoaderError()) != masher::MASHER_OK) {
     printf("Failed to load mesh! Error code: %d\n", (int)error);
     return;
 }
