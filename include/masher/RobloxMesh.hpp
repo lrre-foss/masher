@@ -50,6 +50,13 @@ struct RobloxMeshFace
     RobloxMeshVertex* c; // 3rd Vertex
 };
 
+enum RobloxMeshOptimizer
+{
+    OPTIMIZER_NONE = 0,
+    OPTIMIZER_ROBLOX,
+    OPTIMIZER_ZEUX
+};
+
 struct RobloxMeshBone
 {
     const char* name;
@@ -74,9 +81,9 @@ struct RobloxMeshBone
 
 enum RobloxMeshQuantizedMatrixVersion : uint16_t
 {
-    UNKNOWN = 0,
-    RAW,       /* 1 - Floating point values are stored raw */
-    QUANTIZED, /* 2 - Floating point values are quantized  */
+    MATRIX_UNKNOWN = 0,
+    MATRIX_RAW,       /* 1 - Floating point values are stored raw */
+    MATRIX_QUANTIZED, /* 2 - Floating point values are quantized  */
 };
 
 struct RobloxMeshQuantizedMatrix
@@ -114,6 +121,7 @@ class MASHER_LIB_API RobloxMesh
 public:
     RobloxMeshVersion getVersion() { return version; }
     bool hasLoaded() { return isLoaded; }
+    bool isLodMesh() { return optimizedBy != OPTIMIZER_NONE; }
 
     RobloxMeshVertex* vertices;
     RobloxMeshFace* faces;
@@ -140,6 +148,7 @@ public:
 private:
     RobloxMeshVersion version = ROBLOX_MESH_UNKNOWN;
     bool isLoaded = false;
+    RobloxMeshOptimizer optimizedBy;
 
     bool isTexWDataPresent   = false; // removed in v2.00
     bool isRgbaDataPresent   = false; // added in v2.00
