@@ -206,6 +206,7 @@ bool RobloxMesh::loadV1(std::istringstream& stream)
         throw e;
 #endif
 
+        lastError = ROBLOX_MESH_ERROR_LOADER_EXCEPTION;
         return false;
     }
 
