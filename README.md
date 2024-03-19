@@ -29,7 +29,7 @@ As of right now, you may clone a mesh file using the mesher CLI by running `./ma
 ```cpp
 #include <masher/RobloxMesh.hpp>
 
-masher::RobloxMesh* mesh = new masher::RobloxMesh(data, masher::ROBLOX_MESH_VERSION_5_00);
+masher::RobloxMesh* mesh = new masher::RobloxMesh(file->data, masher::ROBLOX_MESH_VERSION_1_01);
 
 if (!mesh->isLoaded()) {
     printf("Failed to load mesh!\n");
@@ -38,19 +38,14 @@ if (!mesh->isLoaded()) {
 
 int faces = mesh->faces->size();
 int vertices = mesh->vertices->size();
-int bones = mesh->hasBones() ? mesh->bones->size() : 0;
 
-printf("Successfully loaded %d faces, %d vertices, and %s bones!\n", faces, vertices, bones != 0 ? bones);
-
-if (mesh->hasFacsData()) {
-    printf("Mesh has facial animation data! Will be lost during conversion.\n");
-}
+printf("Successfully loaded %d faces and %d vertices!\n", faces, vertices);
 
 // Convert!
-mesh->version = masher::ROBLOX_MESH_VERSION_4_00;
+mesh->version = masher::ROBLOX_MESH_VERSION_1_00;
 std::string data = mesh->write();
 
-printf("Successfully converted v5.00 mesh to v4.00!\n");
+printf("Successfully converted v1.01 mesh to v1.00!\n");
 ```
 
 ## License
