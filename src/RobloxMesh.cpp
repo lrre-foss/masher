@@ -20,7 +20,9 @@ RobloxMeshError lastError = ROBLOX_MESH_ERROR_NONE;
 
 RobloxMeshError GetLastError()
 {
-    return lastError;
+    RobloxMeshError error = lastError;
+    lastError = ROBLOX_MESH_ERROR_NONE;
+    return error;
 }
 
 RobloxMesh::RobloxMesh(const char* data) : hasLoaded(false)
@@ -232,32 +234,38 @@ void RobloxMesh::writeV1(std::ostringstream& stream)
 
 bool RobloxMesh::loadV2(std::istringstream& stream)
 {
+    lastError = ROBLOX_MESH_ERROR_UNSUPPORTED;
+
     return true;
 }
 
 void RobloxMesh::writeV2(std::ostringstream& stream)
 {
-
+    lastError = ROBLOX_MESH_ERROR_UNSUPPORTED;
 }
 
 bool RobloxMesh::loadV3(std::istringstream& stream)
 {
+    lastError = ROBLOX_MESH_ERROR_UNSUPPORTED;
+
     return true;
 }
 
 void RobloxMesh::writeV3(std::ostringstream& stream)
 {
-
+    lastError = ROBLOX_MESH_ERROR_UNSUPPORTED;
 }
 
 bool RobloxMesh::loadV4(std::istringstream& stream)
 {
+    lastError = ROBLOX_MESH_ERROR_UNSUPPORTED;
+
     return true;
 }
 
 void RobloxMesh::writeV4(std::ostringstream& stream)
 {
-
+    lastError = ROBLOX_MESH_ERROR_UNSUPPORTED;
 }
 
 } // namespace masher
