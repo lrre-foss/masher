@@ -21,7 +21,7 @@
 
 namespace masher {
 
-enum RobloxMeshError
+enum Error
 {
     ROBLOX_MESH_ERROR_NONE = 0,
     ROBLOX_MESH_ERROR_UNSUPPORTED = 1,
@@ -33,7 +33,7 @@ enum RobloxMeshError
     ROBLOX_MESH_ERROR_INVALID_FACS = 7
 };
 
-extern MASHER_LIB_API RobloxMeshError getLastError();
+extern MASHER_LIB_API Error GetLastError();
 
 enum RobloxMeshVersion
 {

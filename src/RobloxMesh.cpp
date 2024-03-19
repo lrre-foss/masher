@@ -16,11 +16,11 @@
 
 namespace masher {
 
-RobloxMeshError lastError = ROBLOX_MESH_ERROR_NONE;
+Error lastError = ROBLOX_MESH_ERROR_NONE;
 
-RobloxMeshError GetLastError()
+Error GetLastError()
 {
-    RobloxMeshError error = lastError;
+    Error error = lastError;
     lastError = ROBLOX_MESH_ERROR_NONE;
     return error;
 }
