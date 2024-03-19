@@ -23,14 +23,24 @@ namespace masher {
 
 enum Error
 {
-    ROBLOX_MESH_ERROR_NONE = 0,
-    ROBLOX_MESH_ERROR_UNSUPPORTED = 1,
-    ROBLOX_MESH_ERROR_INVALID_VERSION = 2,
-    ROBLOX_MESH_ERROR_INVALID_SIZE = 3,
-    ROBLOX_MESH_ERROR_INVALID_LOD = 4,
-    ROBLOX_MESH_ERROR_INVALID_BONE = 5,
-    ROBLOX_MESH_ERROR_INVALID_SUBSET = 6,
-    ROBLOX_MESH_ERROR_INVALID_FACS = 7
+                                           //
+    ROBLOX_MESH_ERROR_NONE = 0,            // Default state of GetLastError()
+                                           //
+    ROBLOX_MESH_ERROR_UNSUPPORTED = 1,     // Unsupported version. v6.00 and v7.00 are intentionally left unsupported (see README).
+                                           // v2.00-v5.00 are currently a work in progress and are not supported yet.
+                                           //
+    ROBLOX_MESH_ERROR_INVALID_VERSION = 2, // Invalid version string
+                                           //
+    ROBLOX_MESH_ERROR_INVALID_SIZE = 3,    // Invalid size of mesh header
+                                           //
+    ROBLOX_MESH_ERROR_INVALID_LOD = 4,     // Invalid LOD type
+                                           //
+    ROBLOX_MESH_ERROR_INVALID_BONE = 5,    // Corrupt or invalid bone data (failed to parse)
+                                           //
+    ROBLOX_MESH_ERROR_INVALID_SUBSET = 6,  // Corrupt or invalid subset data (failed to parse)
+                                           //
+    ROBLOX_MESH_ERROR_INVALID_FACS = 7     // Corrupt or invalid FACS data (failed to parse)
+                                           //
 };
 
 extern MASHER_LIB_API Error GetLastError();
@@ -40,6 +50,8 @@ enum RobloxMeshVersion
     ROBLOX_MESH_UNKNOWN = 0,
     ROBLOX_MESH_V1_00 = 1,
     ROBLOX_MESH_V1_01 = 2,
+
+    // Unsupported/WIP below:
     ROBLOX_MESH_V2_00 = 3,
     ROBLOX_MESH_V3_00 = 4,
     ROBLOX_MESH_V3_01 = 5,
