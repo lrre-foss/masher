@@ -29,30 +29,15 @@ int main(int argc, char** argv)
 
     masher::RobloxMesh* mesh = new masher::RobloxMesh(buffer.str().c_str());
 
-    if (!mesh->isLoaded())
+    if (!mesh->isLoaded() || masher::GetLastError() != masher::MASHER_OK)
     {
         std::cerr << "Failed to load mesh!" << std::endl;
         return 1;
     }
 
-    std::cout << "Successfully loaded mesh!" << std::endl;
-
-    std::cout << "Version: ";
-    if (mesh->version == masher::ROBLOX_MESH_V1_00)
-        std::cout << "1.00" << std::endl;
-    else if (mesh->version == masher::ROBLOX_MESH_V1_01)
-        std::cout << "1.01" << std::endl;
-    else if (mesh->version == masher::ROBLOX_MESH_V2_00)
-        std::cout << "2.00" << std::endl;
-    else if (mesh->version == masher::ROBLOX_MESH_V3_00)
-        std::cout << "3.00" << std::endl;
-    else if (mesh->version == masher::ROBLOX_MESH_V4_00)
-        std::cout << "4.00" << std::endl;
-    else if (mesh->version == masher::ROBLOX_MESH_V5_00)
-        std::cout << "5.00" << std::endl;
-
+    std::string versionStrs[] = {"1.00", "1.01", "2.00", "3.00", "3.01", "4.00", "4.01", "5.00", "6.00", "7.00"};
+    std::cout << "Successfully loaded mesh v" << versionStrs[mesh->getVersion()] << "!" << std::endl;
     std::cout << "Loaded " << mesh->vertices->size() << " vertices and " << mesh->faces->size() << " faces" << std::endl;
-
     std::cout << "Attempting to write to file '" + clone.string() + "'..." << std::endl;
 
     std::ofstream output(clone, std::ios::binary);

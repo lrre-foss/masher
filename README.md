@@ -29,24 +29,22 @@ As of right now, you may clone a mesh file using the mesher CLI by running `./ma
 ```cpp
 #include <masher/RobloxMesh.hpp>
 
-masher::RobloxMesh* mesh = new masher::RobloxMesh(file->data, masher::ROBLOX_MESH_VERSION_1_01);
+masher::RobloxMesh* mesh = new masher::RobloxMesh(file->getData());
 
-if (!mesh->isLoaded()) {
-    masher::Error error = masher::GetLastError();
+if (!mesh->isLoaded() || (error = masher::GetLastError()) != masher::MASHER_OK) {
     printf("Failed to load mesh! Error code: %d\n", (int)error);
     return;
 }
 
-int faces = mesh->faces->size();
-int vertices = mesh->vertices->size();
+int numFaces = mesh->faces->size();
+int numVertices = mesh->vertices->size();
 
-printf("Successfully loaded %d faces and %d vertices!\n", faces, vertices);
+printf("Successfully loaded %d faces and %d vertices!\n", numFaces, numVertices);
 
-// Convert!
-mesh->version = masher::ROBLOX_MESH_VERSION_1_00;
-std::string data = mesh->write();
-
-printf("Successfully converted v1.01 mesh to v1.00!\n");
+if (mesh->getVersion() > masher::ROBLOX_MESH_V1_00) {
+    file->write(mesh->write(masher::ROBLOX_MESH_V1_01));
+    printf("Successfully converted mesh to v1.01!\n");
+}
 ```
 
 ## License

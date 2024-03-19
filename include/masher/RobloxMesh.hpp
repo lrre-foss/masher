@@ -23,45 +23,41 @@ namespace masher {
 
 enum Error
 {
-                                            //
-    ROBLOX_MESH_ERROR_NONE = 0,             // Default state of GetLastError()
-                                            //
-    ROBLOX_MESH_ERROR_UNSUPPORTED = 1,      // Unsupported version. v6.00 and v7.00 are intentionally left unsupported (see README).
-                                            // v2.00-v5.00 are currently a work in progress and are not supported yet.
-                                            //
-    ROBLOX_MESH_ERROR_INVALID_VERSION = 2,  // Invalid version string
-                                            //
-    ROBLOX_MESH_ERROR_LOADER_EXCEPTION = 3, // General purpose loader exception
-                                            //
-    ROBLOX_MESH_ERROR_INVALID_SIZE = 4,     // Invalid size of mesh header
-                                            //
-    ROBLOX_MESH_ERROR_INVALID_LOD = 4,      // Invalid LOD type
-                                            //
-    ROBLOX_MESH_ERROR_INVALID_BONE = 5,     // Corrupt or invalid bone data (failed to parse)
-                                            //
-    ROBLOX_MESH_ERROR_INVALID_SUBSET = 6,   // Corrupt or invalid subset data (failed to parse)
-                                            //
-    ROBLOX_MESH_ERROR_INVALID_FACS = 7      // Corrupt or invalid FACS data (failed to parse)
-                                            //
+    MASHER_OK = 0,
+    MASHER_ERROR_INVALID_VERSION,         /* 1 - Invalid/unrecognized version string */
+    MASHER_ERROR_STREAM_FAILURE,          /* 2 - General stream failure (usually due to malformed data) */
+    MASHER_ERROR_V1_MALFORMED_FACE_COUNT, /* 3 - Malformed face count while reading v1.xx mesh */
+    MASHER_ERROR_V1_MALFORMED_VECTOR3,    /* 4 - Malformed Vector3 data while reading v1.xx mesh */
+    MASHER_ERROR_ILLEGAL_OPERATION,       /* 5 - Illegal operation (e.g. trying to write an unloaded mesh) */
+    MASHER_ERROR_UNSUPPORTED,             /* 6 - Mesh format is currently unsupported at this time. v6.xx and v7.xx are left intentionally unsupported -- see README for more info. */
+    MASHER_LAST
 };
 
-extern MASHER_LIB_API Error GetLastError();
+MASHER_LIB_API extern Error GetLastError();
 
 enum RobloxMeshVersion
 {
-    ROBLOX_MESH_UNKNOWN = 0,
-    ROBLOX_MESH_V1_00 = 1,
-    ROBLOX_MESH_V1_01 = 2,
+    // Uses the v1.xx parser
+    ROBLOX_MESH_V1_00 = 0,
+    ROBLOX_MESH_V1_01,
 
-    // Unsupported/WIP below:
-    ROBLOX_MESH_V2_00 = 3,
-    ROBLOX_MESH_V3_00 = 4,
-    ROBLOX_MESH_V3_01 = 5,
-    ROBLOX_MESH_V4_00 = 6,
-    ROBLOX_MESH_V4_01 = 7,
-    ROBLOX_MESH_V5_00 = 8,
-    ROBLOX_MESH_V6_00 = 9,
-    ROBLOX_MESH_V7_00 = 10
+    // Uses the v2.xx parser
+    ROBLOX_MESH_V2_00,
+
+    // Uses the v3.xx parser
+    ROBLOX_MESH_V3_00,
+    ROBLOX_MESH_V3_01,
+
+    // Uses the v4.xx parser
+    ROBLOX_MESH_V4_00,
+    ROBLOX_MESH_V4_01,
+    ROBLOX_MESH_V5_00,
+
+    // Unsupported, but still recognized
+    ROBLOX_MESH_V6_00,
+    ROBLOX_MESH_V7_00,
+
+    ROBLOX_MESH_UNKNOWN
 };
 
 struct RobloxMeshHeaderV2
@@ -242,29 +238,36 @@ struct RobloxMeshThreePoseCorrective
 class MASHER_LIB_API RobloxMesh
 {
 public:
-    std::vector<RobloxMeshVertex>* vertices;
-    std::vector<RobloxMeshFace>*   faces;
-    std::vector<uint32_t>*         lods;
-    std::vector<RobloxMeshBone>*   bones;
-    std::vector<uint8_t>*          boneNameTable;
-    std::vector<RobloxMeshSubset>* subsets;
-    std::vector<uint8_t>*          facs;
+    std::vector<RobloxMeshVertex>*              vertices;
+    std::vector<RobloxMeshFace>*                faces;
+    std::vector<uint32_t>*                      lods;
+    std::vector<RobloxMeshBone>*                bones;
+    std::vector<std::string>*                   boneNames;
+    std::vector<RobloxMeshSubset>*              subsets;
+    std::vector<std::string>*                   faceBoneNames;
+    std::vector<std::string>*                   faceControlNames;
+    std::vector<RobloxMeshQuantizedTransforms>* quantizedTransforms;
+    std::vector<RobloxMeshTwoPoseCorrective>*   twoPoseCorrectives;
+    std::vector<RobloxMeshThreePoseCorrective>* threePoseCorrectives;
 
-    RobloxMeshVersion version = ROBLOX_MESH_UNKNOWN;
+    bool isLoaded()        { return hasLoaded; }
+    bool hasRgbaVertices() { return areVerticesRgba; }
+    bool hasLodData()      { return lods != nullptr; }
+    bool hasFacsData()     { return faceBoneNames != nullptr || faceControlNames != nullptr || quantizedTransforms != nullptr || twoPoseCorrectives != nullptr || threePoseCorrectives != nullptr; }
+    bool hasBones()        { return bones != nullptr || boneNames != nullptr || subsets != nullptr; }
+    bool isSkinned()       { return hasBones(); }
+    bool isDeformed()      { return hasBones(); }
 
-    bool isLoaded() { return hasLoaded; }
-    bool hasRgbaData() { return isRgbaDataPresent; }
-    bool hasLodData() { return lods != nullptr; }
-    bool hasBones() { return bones != nullptr || boneNameTable != nullptr || subsets != nullptr; }
-    bool hasFacsData() { return facs != nullptr; }
+    RobloxMeshVersion getVersion() { return version; }
 
     RobloxMesh(const char* data);
     RobloxMesh(const char* data, RobloxMeshVersion version);
 
-    std::string write();
+    std::string write(RobloxMeshVersion version = ROBLOX_MESH_UNKNOWN);
 
 private:
-    bool isRgbaDataPresent = false;
+    RobloxMeshVersion version = ROBLOX_MESH_UNKNOWN;
+    bool areVerticesRgba = false;
 
     bool hasLoaded;
     bool load(const char* data, bool detect = false);
@@ -277,11 +280,11 @@ private:
     bool loadV2(std::istringstream& stream);
     void writeV2(std::ostringstream& stream);
 
-    // v3.00
+    // v3.00, v3.01
     bool loadV3(std::istringstream& stream);
     void writeV3(std::ostringstream& stream);
 
-    // v4.00, v5.00
+    // v4.00, v4.01, v5.00
     bool loadV4(std::istringstream& stream);
     void writeV4(std::ostringstream& stream);
 };
