@@ -9,12 +9,6 @@ masher currently supports loading and writing to the following mesh versions:
 
 - Version 1.00
 - Version 1.01
-- Version 2.00 (WIP)
-- Version 3.00 (WIP)
-- Version 3.01 (WIP)
-- Version 4.00 (WIP)
-- Version 4.01 (WIP)
-- Version 5.00 (WIP)
 
 Versions 6.00 and 7.00 are intentionally left unsupported since it has yet to officially release.
 
