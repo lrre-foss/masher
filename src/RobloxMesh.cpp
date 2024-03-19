@@ -68,10 +68,10 @@ bool RobloxMesh::load(const char* data, bool detect)
     std::string dummy;
     std::getline(stream, dummy);
 
-    // RGBA data didn't exist until v2.00. However, RGBA data was only enabled until after v2.00 had officially gone into use.
-    // Thus, we have check if it has RGBA data in loadV2 by seeing if the mesh header's sizeof_Vertex == 40 and not 36.
+    // RGBA data didn't exist until v2.00. However, RGBA tinting wasn't made a default property of all vertices until v4.00.
+    // Thus, we have check if it has RGBA data in loadV2/loadV3 by seeing if the mesh header's sizeof_Vertex == 40 and not 36.
     // If it is 40, we turn this on, and we add RobloxMeshVertexRGBAs instead of RobloxMeshVertexs to this->vertices.
-    if (this->version > ROBLOX_MESH_V2_00)
+    if (this->version > ROBLOX_MESH_V3_00)
         this->areVerticesRgba = true;
 
     switch (this->version)
