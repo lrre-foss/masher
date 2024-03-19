@@ -30,7 +30,7 @@ cmake --build . --config RelWithDebInfo
 
 ### Usage
 
-Below is an example of loading converting a version 5.00 mesh file to version 4.00 using masher.
+As of right now, you may clone a mesh file using the mesher CLI by running `./masher.cli <path_to_mesh_file>`. You may also embed masher in your own project by simply including the `masher.hpp` header file and linking against masher. Below is a quick example of loading and converting a version 5.00 mesh file to version 4.00 using the masher library.
 
 ```cpp
 #include <masher/RobloxMesh.hpp>
