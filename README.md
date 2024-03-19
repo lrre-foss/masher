@@ -16,11 +16,11 @@ masher currently supports the following mesh versions:
 - Version 4.01 (WIP)
 - Version 5.00 (WIP)
 
-Versions 6.00 and 7.00 are intentionally left unsupported due to the fact that there is no Roblox mesh file available that has been encoded in these formats; thus, there can be no documentation on how it works. 
+Versions 6.00 and 7.00 are intentionally left unsupported due to the fact that there is no Roblox mesh file available that has been encoded in these formats; thus, there can be no documentation on how it works.
 
 ## Building
 
-masher is available both as a CLI app as well as a standalone library for embedding in your own applications. On all platforms, you can use CMake to run the following commands to build masher binaries from source:
+masher is available both as a CLI app as well as a standalone library for embedding in your own applications. You may turn off the `MASHER_BUILD_CLI` option to toggle building the CLI application by default. On all platforms, you can use CMake to run the following commands to build masher binaries from source:
 
 ```sh
 mkdir cmake && cd cmake
