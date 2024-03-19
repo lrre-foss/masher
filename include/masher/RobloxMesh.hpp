@@ -21,14 +21,33 @@
 
 namespace masher {
 
+enum RobloxMeshError
+{
+    ROBLOX_MESH_ERROR_NONE = 0,
+    ROBLOX_MESH_ERROR_UNSUPPORTED = 1,
+    ROBLOX_MESH_ERROR_INVALID_VERSION = 2,
+    ROBLOX_MESH_ERROR_INVALID_SIZE = 3,
+    ROBLOX_MESH_ERROR_INVALID_LOD = 4,
+    ROBLOX_MESH_ERROR_INVALID_BONE = 5,
+    ROBLOX_MESH_ERROR_INVALID_SUBSET = 6,
+    ROBLOX_MESH_ERROR_INVALID_FACS = 7
+};
+
+extern MASHER_LIB_API RobloxMeshError getLastError();
+
 enum RobloxMeshVersion
 {
+    ROBLOX_MESH_UNKNOWN = 0,
     ROBLOX_MESH_V1_00 = 1,
     ROBLOX_MESH_V1_01 = 2,
     ROBLOX_MESH_V2_00 = 3,
     ROBLOX_MESH_V3_00 = 4,
-    ROBLOX_MESH_V4_00 = 5,
-    ROBLOX_MESH_V5_00 = 6,
+    ROBLOX_MESH_V3_01 = 5,
+    ROBLOX_MESH_V4_00 = 6,
+    ROBLOX_MESH_V4_01 = 7,
+    ROBLOX_MESH_V5_00 = 8,
+    ROBLOX_MESH_V6_00 = 9,
+    ROBLOX_MESH_V7_00 = 10
 };
 
 struct RobloxMeshHeaderV2
@@ -217,7 +236,7 @@ public:
     std::vector<RobloxMeshSubset>* subsets;
     std::vector<uint8_t>*          facs;
 
-    RobloxMeshVersion version;
+    RobloxMeshVersion version = ROBLOX_MESH_UNKNOWN;
 
     bool isLoaded() { return hasLoaded; }
     bool hasRgbaData() { return isRgbaDataPresent; }

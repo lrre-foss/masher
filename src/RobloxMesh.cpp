@@ -16,6 +16,13 @@
 
 namespace masher {
 
+RobloxMeshError lastError = ROBLOX_MESH_ERROR_NONE;
+
+RobloxMeshError GetLastError()
+{
+    return lastError;
+}
+
 RobloxMesh::RobloxMesh(const char* data) : hasLoaded(false)
 {
     hasLoaded = load(data, true);
@@ -43,12 +50,22 @@ bool RobloxMesh::load(const char* data, bool detect)
             this->version = ROBLOX_MESH_V2_00;
         else if (version == "version 3.00")
             this->version = ROBLOX_MESH_V3_00;
+        else if (version == "version 3.01")
+            this->version = ROBLOX_MESH_V3_01;
         else if (version == "version 4.00")
             this->version = ROBLOX_MESH_V4_00;
+        else if (version == "version 4.01")
+            this->version = ROBLOX_MESH_V4_01;
         else if (version == "version 5.00")
             this->version = ROBLOX_MESH_V5_00;
-        else
+        else if (version == "version 6.00")
+            this->version = ROBLOX_MESH_V6_00;
+        else if (version == "version 7.00")
+            this->version = ROBLOX_MESH_V7_00;
+        else {
+            lastError = ROBLOX_MESH_ERROR_INVALID_VERSION;
             return false;
+        }
     }
 
     std::istringstream stream(data);
@@ -65,10 +82,16 @@ bool RobloxMesh::load(const char* data, bool detect)
         case ROBLOX_MESH_V2_00:
             return loadV2(stream);
         case ROBLOX_MESH_V3_00:
+        case ROBLOX_MESH_V3_01:
             return loadV3(stream);
         case ROBLOX_MESH_V4_00:
+        case ROBLOX_MESH_V4_01:
         case ROBLOX_MESH_V5_00:
             return loadV4(stream);
+        case ROBLOX_MESH_V6_00:
+        case ROBLOX_MESH_V7_00:
+            lastError = ROBLOX_MESH_ERROR_UNSUPPORTED;
+            return false;
         default:
             return false;
     }
@@ -94,8 +117,6 @@ std::string RobloxMesh::write()
         case ROBLOX_MESH_V5_00:
             writeV4(stream);
             break;
-        default:
-            return "";
     }
 
     return stream.str();
