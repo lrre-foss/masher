@@ -5,18 +5,12 @@
 
 Roblox mesh loader
 
-masher currently supports the following mesh versions:
+masher currently supports loading and writing to the following mesh versions:
 
 - Version 1.00
 - Version 1.01
-- Version 2.00 (WIP)
-- Version 3.00 (WIP)
-- Version 3.01 (WIP)
-- Version 4.00 (WIP)
-- Version 4.01 (WIP)
-- Version 5.00 (WIP)
 
-Versions 6.00 and 7.00 are intentionally left unsupported due to the fact that there is no Roblox mesh file available that has been encoded in these formats; thus, there can be no documentation on how it works.
+Versions 6.00 and 7.00 are intentionally left unsupported since it has yet to officially release.
 
 ## Building
 
@@ -35,7 +29,7 @@ As of right now, you may clone a mesh file using the mesher CLI by running `./ma
 ```cpp
 #include <masher/RobloxMesh.hpp>
 
-masher::RobloxMesh* mesh = new masher::RobloxMesh(data, masher::VERSION_5_00);
+masher::RobloxMesh* mesh = new masher::RobloxMesh(file->data, masher::ROBLOX_MESH_VERSION_1_01);
 
 if (!mesh->isLoaded()) {
     printf("Failed to load mesh!\n");
@@ -44,23 +38,18 @@ if (!mesh->isLoaded()) {
 
 int faces = mesh->faces->size();
 int vertices = mesh->vertices->size();
-int bones = mesh->hasBones() ? mesh->bones->size() : 0;
 
-printf("Successfully loaded %d faces, %d vertices, and %s bones!\n", faces, vertices, bones != 0 ? bones);
-
-if (mesh->hasFacsData()) {
-    printf("Mesh has facial animation data! Will be lost during conversion.\n");
-}
+printf("Successfully loaded %d faces and %d vertices!\n", faces, vertices);
 
 // Convert!
-mesh->version = masher::VERSION_4_00;
+mesh->version = masher::ROBLOX_MESH_VERSION_1_00;
 std::string data = mesh->write();
 
-printf("Successfully converted v5.00 mesh to v4.00!\n");
+printf("Successfully converted v1.01 mesh to v1.00!\n");
 ```
 
 ## License
 
 masher is licensed under the [MIT license](https://github.com/lrre-foss/masher/blob/trunk/LICENSE). A copy of it has been included with masher.
 
-masher was written using [MaximumADHD's Roblox Mesh Format documentation](https://devforum.roblox.com/t/roblox-mesh-format/326114) as a reference for reading and writing Roblox mesh file data.
+masher was written using [MaximumADHD's Roblox Mesh Format documentation](https://devforum.roblox.com/t/roblox-mesh-format/326114) as a reference for implementing the Roblox mesh file format.

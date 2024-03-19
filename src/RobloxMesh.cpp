@@ -74,6 +74,12 @@ bool RobloxMesh::load(const char* data, bool detect)
     std::string dummy;
     std::getline(stream, dummy);
 
+    // RGBA data didn't exist until v2.00. However, RGBA data was only enabled until after v2.00 launched.
+    // Thus, we have check if it has RGBA data in loadV2 by seeing if the mesh header's sizeof_Vertex == 40 and not 36.
+    // If it is 40, we turn this on, and we add RobloxMeshVertexRGBAs instead of RobloxMeshVertexs to this->vertices.
+    if (this->version > ROBLOX_MESH_V2_00)
+        this->isRgbaDataPresent = true;
+
     switch (this->version)
     {
         case ROBLOX_MESH_V1_00:
