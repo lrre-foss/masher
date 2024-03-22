@@ -1,7 +1,7 @@
 #pragma once
 
 #if defined(_WIN32)
-    #define MASHER_LIB_EXPORT __declspec(dllexport)
+    #define MASHER_EXPORT __declspec(dllexport)
 
     #ifdef MASHER_LIB_EXPORT
         #define MASHER_LIB_API __declspec(dllexport)
@@ -9,8 +9,8 @@
         #define MASHER_LIB_API __declspec(dllimport)
     #endif
 #elif defined(__GNUC__) && __GNUC__ >= 4
-    #define MASHER_LIB_EXPORT __attribute__ ((visibility("default")))
     #define MASHER_LIB_API __attribute__ ((visibility("default")))
+    #define MASHER_EXPORT MASHER_LIB_API
 #else
     #define MASHER_LIB_EXPORT
     #define MASHER_LIB_API
@@ -32,7 +32,7 @@ enum Error
 
 Error lastError = MASHER_OK;
 
-MASHER_LIB_EXPORT Error GetLoaderError(bool wipeLastError = true)
+MASHER_EXPORT Error GetLoaderError(bool wipeLastError = true)
 {
     Error error = lastError;
 
@@ -41,5 +41,7 @@ MASHER_LIB_EXPORT Error GetLoaderError(bool wipeLastError = true)
 
     return error;
 }
+
+MASHER_LIB_API void SetLoaderError(Error error);
 
 } // namespace masher
