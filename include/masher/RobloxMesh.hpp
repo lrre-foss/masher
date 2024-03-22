@@ -9,6 +9,61 @@
 
 namespace masher {
 
+MASHER_LIB_API class RobloxMesh
+{
+public:
+    RobloxMeshVersion getVersion() { return version; }
+    bool hasLoaded() { return isLoaded; }
+    bool isLodMesh() { return optimizer != OPTIMIZER_NONE; }
+
+    RobloxMeshOptimizer optimizer = OPTIMIZER_NONE;
+
+    RobloxMeshVertex* vertices;
+    RobloxMeshFace* faces;
+    RobloxMeshBone* bones;
+    RobloxMeshSubset* subsets;
+    RobloxMesh* lodMeshes;
+
+    // FACS data
+    RobloxMeshQuantizedMatrix* quantizedMatrices;
+    RobloxMeshTwoPoseCorrective* twoPoseCorrectives;
+    RobloxMeshThreePoseCorrective* threePoseCorrectives;
+
+    bool holdsTexWData()   { return isTexWDataPresent;   }
+    bool holdsRgbaData()   { return isRgbaDataPresent;   }
+    bool holdsLodData()    { return isLodDataPresent;    }
+    bool holdsBoneData()   { return isBoneDataPresent;   }
+    bool holdsSubsetData() { return isSubsetDataPresent; }
+    bool holdsFacsData()   { return isFacsDataPresent;   }
+
+    RobloxMesh(const char* data);
+    RobloxMesh(const char* data, RobloxMeshVersion version);
+    RobloxMesh(RobloxMeshSubset* subset);
+
+    std::string write(RobloxMeshVersion version = ROBLOX_MESH_UNKNOWN);
+
+private:
+    RobloxMeshVersion version = ROBLOX_MESH_UNKNOWN;
+    bool isLoaded = false;
+
+    bool isTexWDataPresent   = false; // Removed in v2.00
+    bool isRgbaDataPresent   = false; // Added in v2.00, always true >v3.00
+    bool isLodDataPresent    = false; // Added in v3.00
+    bool isBoneDataPresent   = false; // Added in v4.00
+    bool isSubsetDataPresent = false; // Added in v4.00
+    bool isFacsDataPresent   = false; // Added in v5.00
+
+    bool load(const char* data, bool detect = false);
+
+    // v1.00, v1.01
+    bool loadText(std::istringstream& stream);
+    void writeText(std::ostringstream& stream);
+
+    // v2.00+
+    bool loadBinary(std::istringstream& stream);
+    void writeBinary(std::ostringstream& stream);
+};
+
 enum RobloxMeshVersion
 {
     // Uses the v1.xx parser
@@ -34,11 +89,20 @@ enum RobloxMeshVersion
     ROBLOX_MESH_UNKNOWN
 };
 
+// Used to determine which optimizer was used on the LOD meshes
+enum RobloxMeshOptimizer
+{
+    OPTIMIZER_NONE = 0,
+    OPTIMZIER_UNKNOWN, // Unused, but masher uses this if RobloxMesh->optimizer was never set
+    OPTIMIZER_ROBLOX,
+    OPTIMIZER_ZEUX
+};
+
 struct RobloxMeshVertex
 {
     float   px, py, pz; // Position
     float   nx, ny, nz; // Normal Vector
-    float   tu, tv, tw; // UV Texture Coordinates
+    float   tu, tv, tw; // UV Texture Coordinates (tex_W is only for data retention with corrupt v1.xx meshes)
     float   tx, ty, tz; // Tangent Vector
     uint8_t r, g, b, a; // RGBA Color Tinting
 };
@@ -48,13 +112,6 @@ struct RobloxMeshFace
     RobloxMeshVertex* a; // 1st Vertex
     RobloxMeshVertex* b; // 2nd Vertex
     RobloxMeshVertex* c; // 3rd Vertex
-};
-
-enum RobloxMeshOptimizer
-{
-    OPTIMIZER_NONE = 0,
-    OPTIMIZER_ROBLOX,
-    OPTIMIZER_ZEUX
 };
 
 struct RobloxMeshBone
@@ -79,6 +136,31 @@ struct RobloxMeshBone
     float x, y, z;
 };
 
+// Meshes are sometimes broken into subsets to get around some graphics cards
+// not supporting >26 bones per mesh; thus, RobloxMeshSubsest just takes as many
+// bones as possible (but <26) and assigns them to a mesh with corresponding
+// verts/faces.
+struct RobloxMeshSubset
+{
+    RobloxMeshVertex* vertices;
+    RobloxMeshFace* faces;
+    RobloxMeshBone* bones[26];
+
+    RobloxMesh* mesh()
+    {
+        RobloxMesh* mesh = new RobloxMesh(this);
+
+        if (!mesh->hasLoaded())
+        {
+            delete mesh;
+            return nullptr;
+        }
+
+        return mesh;
+    }
+};
+
+// FACS data
 enum RobloxMeshQuantizedMatrixVersion : uint16_t
 {
     MATRIX_UNKNOWN = 0,
@@ -103,69 +185,19 @@ struct RobloxMeshQuantizedTransforms
     RobloxMeshQuantizedMatrix rz;
 };
 
+// A combination of 2-3 FACS poses (read: strings) that are used to make a more
+// complex facial expression
 struct RobloxMeshTwoPoseCorrective
 {
-    RobloxMeshBone* control0;
-    RobloxMeshBone* control1;
+    const char* control0;
+    const char* control1;
 };
 
 struct RobloxMeshThreePoseCorrective
 {
-    RobloxMeshBone* control0;
-    RobloxMeshBone* control1;
-    RobloxMeshBone* control2;
-};
-
-class MASHER_LIB_API RobloxMesh
-{
-public:
-    RobloxMeshVersion getVersion() { return version; }
-    bool hasLoaded() { return isLoaded; }
-    bool isLodMesh() { return optimizedBy != OPTIMIZER_NONE; }
-
-    RobloxMeshVertex* vertices;
-    RobloxMeshFace* faces;
-    RobloxMeshBone* bones;
-    RobloxMesh* lodMeshes;
-
-    // Facial animation data
-    RobloxMeshQuantizedMatrix* quantizedMatrices;
-    RobloxMeshTwoPoseCorrective* twoPoseCorrectives;
-    RobloxMeshThreePoseCorrective* threePoseCorrectives;
-
-    bool holdsTexWData()   { return isTexWDataPresent;   }
-    bool holdsRgbaData()   { return isRgbaDataPresent;   }
-    bool holdsLodData()    { return isLodDataPresent;    }
-    bool holdsBoneData()   { return isBoneDataPresent;   }
-    bool holdsSubsetData() { return isSubsetDataPresent; }
-    bool holdsFacsData()   { return isFacsDataPresent;   }
-
-    RobloxMesh(const char* data);
-    RobloxMesh(const char* data, RobloxMeshVersion version);
-
-    std::string write(RobloxMeshVersion version = ROBLOX_MESH_UNKNOWN);
-
-private:
-    RobloxMeshVersion version = ROBLOX_MESH_UNKNOWN;
-    bool isLoaded = false;
-    RobloxMeshOptimizer optimizedBy;
-
-    bool isTexWDataPresent   = false; // removed in v2.00
-    bool isRgbaDataPresent   = false; // added in v2.00
-    bool isLodDataPresent    = false; // added in v3.00
-    bool isBoneDataPresent   = false; // added in v4.00
-    bool isSubsetDataPresent = false; // added in v4.00
-    bool isFacsDataPresent   = false; // added in v5.00
-
-    bool load(const char* data, bool detect = false);
-
-    // v1.00, v1.01
-    bool loadText(std::istringstream& stream);
-    void writeText(std::ostringstream& stream);
-
-    // v2.00+
-    bool loadBinary(std::istringstream& stream);
-    void writeBinary(std::ostringstream& stream);
+    const char* control0;
+    const char* control1;
+    const char* control2;
 };
 
 } // namespace masher
