@@ -62,6 +62,7 @@ enum RobloxMeshOptimizer
     OPTIMIZER_ROBLOX,
     OPTIMIZER_ZEUX
 };
+
 class MASHER_LIB_API RobloxMesh
 {
 public:
