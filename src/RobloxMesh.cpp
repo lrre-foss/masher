@@ -58,7 +58,7 @@ bool RobloxMesh::load(const char* data, bool detect)
         else if (version == "7.00") this->version = ROBLOX_MESH_V7_00;
         else
         {
-            masher::SetLoaderError(MASHER_ERROR_UNSUPPORTED);
+            masher::SetLastError(MASHER_ERROR_UNSUPPORTED);
             return false;
         }
     }
@@ -76,7 +76,7 @@ std::string RobloxMesh::write(RobloxMeshVersion version)
 {
     if (!this->isLoaded)
     {
-        masher::SetLoaderError(MASHER_ERROR_ILLEGAL_OPERATION);
+        masher::SetLastError(MASHER_ERROR_ILLEGAL_OPERATION);
         return "";
     }
 
@@ -94,13 +94,13 @@ std::string RobloxMesh::write(RobloxMeshVersion version)
 
 bool RobloxMesh::loadBinary(std::istringstream& stream)
 {
-    masher::SetLoaderError(MASHER_ERROR_UNSUPPORTED);
+    masher::SetLastError(MASHER_ERROR_UNSUPPORTED);
     return false;
 }
 
 void RobloxMesh::writeBinary(std::ostringstream& stream)
 {
-    masher::SetLoaderError(MASHER_ERROR_UNSUPPORTED);
+    masher::SetLastError(MASHER_ERROR_UNSUPPORTED);
 }
 
 bool RobloxMesh::loadText(std::istringstream& stream)
@@ -115,7 +115,7 @@ bool RobloxMesh::loadText(std::istringstream& stream)
 
     if (stream.fail())
     {
-        masher::SetLoaderError(MASHER_ERROR_STREAM_FAILURE);
+        masher::SetLastError(MASHER_ERROR_STREAM_FAILURE);
         return false;
     }
 
@@ -125,7 +125,7 @@ bool RobloxMesh::loadText(std::istringstream& stream)
         // See if any data is left in the stream; if so, you're corrupt
         if (stream.rdbuf()->in_avail() > 0)
         {
-            masher::SetLoaderError(MASHER_ERROR_V1_MALFORMED_FACE_COUNT);
+            masher::SetLastError(MASHER_ERROR_V1_MALFORMED_FACE_COUNT);
             return false;
         }
 
@@ -163,7 +163,7 @@ bool RobloxMesh::loadText(std::istringstream& stream)
                 }
                 catch (std::exception)
                 {
-                    masher::SetLoaderError(MASHER_ERROR_V1_MALFORMED_VECTOR3);
+                    masher::SetLastError(MASHER_ERROR_V1_MALFORMED_VECTOR3);
                     return false;
                 }
 

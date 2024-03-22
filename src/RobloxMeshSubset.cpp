@@ -23,7 +23,10 @@ std::vector<RobloxMeshBone>* RobloxMeshSubset::getBones()
 void RobloxMeshSubset::setBones(std::vector<RobloxMeshBone>* bones)
 {
     if (bones->size() >= 26)
+    {
+        masher::SetLastError(MASHER_ERROR_ILLEGAL_OPERATION);
         throw std::invalid_argument("RobloxMeshSubset::setBones: bones.size() must be less than 26");
+    }
 
     this->bones = bones;
 }

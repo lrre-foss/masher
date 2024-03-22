@@ -29,9 +29,10 @@ As of right now, you may clone a mesh file using the mesher CLI by running `./ma
 ```cpp
 #include <masher/RobloxMesh.hpp>
 
-masher::RobloxMesh* mesh = new masher::RobloxMesh(file->getData());
+std::unique_ptr<masher::RobloxMesh> mesh = std::make_unique<masher::RobloxMesh>(file->getData());
 
-if (!mesh->isLoaded() || (error = masher::GetLoaderError()) != masher::MASHER_OK) {
+masher::Error error;
+if (!mesh->isLoaded() || (error = masher::GetLastError()) != masher::MASHER_OK) {
     printf("Failed to load mesh! Error code: %d\n", (int)error);
     return;
 }
@@ -42,8 +43,8 @@ int numVertices = mesh->vertices->size();
 printf("Successfully loaded %d faces and %d vertices!\n", numFaces, numVertices);
 
 if (mesh->getVersion() > masher::ROBLOX_MESH_V1_00) {
-    file->write(mesh->write(masher::ROBLOX_MESH_V1_01));
-    printf("Successfully converted mesh to v1.01!\n");
+    file->write(mesh->write(masher::ROBLOX_MESH_V1_00));
+    printf("Successfully converted mesh to v1.00!\n");
 }
 ```
 

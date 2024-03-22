@@ -4,7 +4,7 @@ namespace masher {
 
 static Error lastError = MASHER_OK;
 
-Error GetLoaderError(bool wipeLastError)
+Error GetLastError(bool wipeLastError)
 {
     Error error = lastError;
 
@@ -14,7 +14,7 @@ Error GetLoaderError(bool wipeLastError)
     return error;
 }
 
-void SetLoaderError(Error error)
+void SetLastError(Error error)
 {
     lastError = error;
 }

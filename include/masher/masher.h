@@ -26,7 +26,7 @@ enum Error
     MASHER_LAST
 };
 
-extern MASHER_LIB_API Error GetLoaderError(bool wipeLastError = true);
-extern MASHER_LIB_API void SetLoaderError(Error error);
+extern MASHER_LIB_API Error GetLastError(bool wipeLastError = true);
+extern MASHER_LIB_API void SetLastError(Error error);
 
 } // namespace masher
