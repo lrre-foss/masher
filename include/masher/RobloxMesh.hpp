@@ -46,7 +46,7 @@ private:
     RobloxMeshVersion version = ROBLOX_MESH_UNKNOWN;
     bool isLoaded = false;
 
-    bool isTexWDataPresent   = false; // Removed in v2.00
+    bool isTexWDataPresent   = false; // Removed in v2.00, always false >v1.01
     bool isRgbaDataPresent   = false; // Added in v2.00, always true >v3.00
     bool isLodDataPresent    = false; // Added in v3.00
     bool isBoneDataPresent   = false; // Added in v4.00
