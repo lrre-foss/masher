@@ -29,7 +29,8 @@ int main(int argc, char** argv)
 
     masher::RobloxMesh* mesh = new masher::RobloxMesh(buffer.str().c_str());
 
-    if (!mesh->isLoaded() || (error = masher::GetLastError()) != masher::MASHER_OK)
+    masher::Error error;
+    if (!mesh->hasLoaded() || (error = masher::GetLoaderError()) != masher::MASHER_OK)
     {
         std::cerr << "Failed to load mesh! Error code: " << std::to_string(error) << std::endl;
         return 1;

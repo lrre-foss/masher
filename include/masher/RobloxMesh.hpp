@@ -1,3 +1,14 @@
+/**
+ * https://devforum.roblox.com/t/roblox-mesh-format/326114
+ * 
+ * v1.00 is simple position, normal, and UV Vector3s
+ * v1.01 fixes some bugs in V1.00
+ * v2.00 is the same except represented in binary format
+ * v3.00 adds support for LOD
+ * v4.00 is a full overhaul adding support for skeletal data and mesh deformation
+ * v5.00 is a slight revision to V4 with additional facial animation data at the end
+ */
+
 #pragma once
 
 #include <cstdint>
@@ -6,66 +17,17 @@
 #include <vector>
 
 #include "masher.h"
+#include "RobloxMeshSubset.hpp"
 
 namespace masher {
 
-MASHER_LIB_API class RobloxMesh
-{
-public:
-    RobloxMeshVersion getVersion() { return version; }
-    bool hasLoaded() { return isLoaded; }
-    bool isLodMesh() { return optimizer != OPTIMIZER_NONE; }
-
-    RobloxMeshOptimizer optimizer = OPTIMIZER_NONE;
-
-    RobloxMeshVertex* vertices;
-    RobloxMeshFace* faces;
-    RobloxMeshBone* bones;
-    RobloxMeshSubset* subsets;
-    RobloxMesh* lodMeshes;
-
-    // FACS data
-    RobloxMeshQuantizedMatrix* quantizedMatrices;
-    RobloxMeshTwoPoseCorrective* twoPoseCorrectives;
-    RobloxMeshThreePoseCorrective* threePoseCorrectives;
-
-    bool holdsTexWData()   { return version > ROBLOX_MESH_V1_01 ? false : isTexWDataPresent; }
-    bool holdsRgbaData()   { return version > ROBLOX_MESH_V2_00 ? true  : isRgbaDataPresent; }
-    bool holdsLodData()    { return isLodDataPresent;    }
-    bool holdsBoneData()   { return isBoneDataPresent;   }
-    bool holdsSubsetData() { return isSubsetDataPresent; }
-    bool holdsFacsData()   { return isFacsDataPresent;   }
-
-    RobloxMesh(const char* data);
-    RobloxMesh(const char* data, RobloxMeshVersion version);
-
-    std::string write(RobloxMeshVersion version = ROBLOX_MESH_UNKNOWN);
-
-private:
-    RobloxMeshVersion version = ROBLOX_MESH_UNKNOWN;
-    bool isLoaded = false;
-
-    bool isTexWDataPresent   = false; // Removed in v2.00, always false >v1.01
-    bool isRgbaDataPresent   = false; // Added in v2.00, always true >v3.00
-    bool isLodDataPresent    = false; // Added in v3.00
-    bool isBoneDataPresent   = false; // Added in v4.00
-    bool isSubsetDataPresent = false; // Added in v4.00
-    bool isFacsDataPresent   = false; // Added in v5.00
-
-    RobloxMesh(RobloxMeshSubset* subset);
-
-    bool load(const char* data, bool detect = false);
-
-    // v1.00, v1.01
-    bool loadText(std::istringstream& stream);
-    void writeText(std::ostringstream& stream);
-
-    // v2.00+
-    bool loadBinary(std::istringstream& stream);
-    void writeBinary(std::ostringstream& stream);
-
-    friend struct RobloxMeshSubset;
-};
+class RobloxMeshSubset;
+struct RobloxMeshVertex;
+struct RobloxMeshFace;
+struct RobloxMeshBone;
+struct RobloxMeshQuantizedMatrix;
+struct RobloxMeshTwoPoseCorrective;
+struct RobloxMeshThreePoseCorrective;
 
 enum RobloxMeshVersion
 {
@@ -99,6 +61,64 @@ enum RobloxMeshOptimizer
     OPTIMZIER_UNKNOWN, // Unused, but masher uses this if RobloxMesh->optimizer was never set
     OPTIMIZER_ROBLOX,
     OPTIMIZER_ZEUX
+};
+class MASHER_LIB_API RobloxMesh
+{
+public:
+    RobloxMeshVersion getVersion() { return version; }
+    bool hasLoaded() { return isLoaded; }
+    bool isLodMesh() { return optimizer != OPTIMIZER_NONE; }
+
+    RobloxMeshOptimizer optimizer = OPTIMIZER_NONE;
+
+    std::vector<RobloxMeshVertex>* vertices;
+    std::vector<RobloxMeshFace>* faces;
+    std::vector<RobloxMeshBone>* bones;
+    std::vector<RobloxMeshSubset>* subsets;
+    std::vector<RobloxMesh>* lodMeshes;
+
+    // FACS data
+    std::vector<RobloxMeshQuantizedMatrix>* quantizedMatrices;
+    std::vector<RobloxMeshTwoPoseCorrective>* twoPoseCorrectives;
+    std::vector<RobloxMeshThreePoseCorrective>* threePoseCorrectives;
+
+    bool holdsTexWData()   { return version > ROBLOX_MESH_V1_01 ? false : isTexWDataPresent; }
+    bool holdsRgbaData()   { return version > ROBLOX_MESH_V2_00 ? true  : isRgbaDataPresent; }
+    bool holdsLodData()    { return isLodDataPresent;    }
+    bool holdsBoneData()   { return isBoneDataPresent;   }
+    bool holdsSubsetData() { return isSubsetDataPresent; }
+    bool holdsFacsData()   { return isFacsDataPresent;   }
+
+    RobloxMesh(const char* data);
+    RobloxMesh(const char* data, RobloxMeshVersion version);
+    ~RobloxMesh();
+
+    std::string write(RobloxMeshVersion version = ROBLOX_MESH_UNKNOWN);
+
+private:
+    RobloxMeshVersion version = ROBLOX_MESH_UNKNOWN;
+    bool isLoaded = false;
+
+    bool isTexWDataPresent   = false; // Removed in v2.00, always false >v1.01
+    bool isRgbaDataPresent   = false; // Added in v2.00, always true >v3.00
+    bool isLodDataPresent    = false; // Added in v3.00
+    bool isBoneDataPresent   = false; // Added in v4.00
+    bool isSubsetDataPresent = false; // Added in v4.00
+    bool isFacsDataPresent   = false; // Added in v5.00
+
+    RobloxMesh(RobloxMeshSubset* subset);
+
+    bool load(const char* data, bool detect = true);
+
+    // v2.00+
+    bool loadBinary(std::istringstream& stream);
+    void writeBinary(std::ostringstream& stream);
+
+    // v1.00, v1.01
+    bool loadText(std::istringstream& stream);
+    void writeText(std::ostringstream& stream);
+
+    friend class RobloxMeshSubset;
 };
 
 struct RobloxMeshVertex
@@ -139,30 +159,6 @@ struct RobloxMeshBone
     float x, y, z;
 };
 
-// Meshes are sometimes broken into subsets to get around some graphics cards
-// not supporting >26 bones per mesh; thus, RobloxMeshSubsest just takes as many
-// bones as possible (but <26) and assigns them to a mesh with corresponding
-// verts/faces.
-struct RobloxMeshSubset
-{
-    RobloxMeshVertex* vertices;
-    RobloxMeshFace* faces;
-    RobloxMeshBone* bones[26];
-
-    RobloxMesh* mesh()
-    {
-        RobloxMesh* mesh = new RobloxMesh(this);
-
-        if (!mesh->hasLoaded())
-        {
-            delete mesh;
-            return nullptr;
-        }
-
-        return mesh;
-    }
-};
-
 // FACS data
 enum RobloxMeshQuantizedMatrixVersion : uint16_t
 {
@@ -174,6 +170,8 @@ enum RobloxMeshQuantizedMatrixVersion : uint16_t
 struct RobloxMeshQuantizedMatrix
 {
     RobloxMeshQuantizedMatrixVersion version;
+
+    uint32_t rows, cols;
     float** matrix;
 };
 

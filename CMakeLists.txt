@@ -6,7 +6,8 @@ project(masher LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_library(masher SHARED src/RobloxMesh.cpp)
+add_library(masher SHARED src/masher.cpp src/RobloxMesh.cpp src/RobloxMeshSubset.cpp)
+target_compile_definitions(masher PRIVATE MASHER_LIB_EXPORT)
 target_include_directories(masher PUBLIC include)
 
 if(MASHER_BUILD_CLI)
