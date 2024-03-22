@@ -181,8 +181,12 @@ bool RobloxMesh::loadText(std::istringstream& stream)
                 }
                 else
                 {
+                    if (z != 0.0f && !this->isTexWDataPresent)
+                        this->isTexWDataPresent = true;
+
                     vertex.tu = x;
                     vertex.tv = 1.0f - y; // v1.xx quirk where tex_V is inverted
+                    vertex.tw = z;
                 }
             }
 
@@ -217,7 +221,7 @@ void RobloxMesh::writeText(std::ostringstream& stream)
 
             stream << "[" << vertex->px * scale << "," << vertex->py * scale << "," << vertex->pz * scale << "]";
             stream << "[" << vertex->nx << "," << vertex->ny << "," << vertex->nz << "]";
-            stream << "[" << vertex->tu << "," << 1.0f - vertex->tv << ",0]";
+            stream << "[" << vertex->tu << "," << 1.0f - vertex->tv << "," << vertex->tw << "]";
         }
     }
 }
