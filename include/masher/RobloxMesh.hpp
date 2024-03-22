@@ -29,8 +29,8 @@ public:
     RobloxMeshTwoPoseCorrective* twoPoseCorrectives;
     RobloxMeshThreePoseCorrective* threePoseCorrectives;
 
-    bool holdsTexWData()   { return isTexWDataPresent;   }
-    bool holdsRgbaData()   { return isRgbaDataPresent;   }
+    bool holdsTexWData()   { return version > ROBLOX_MESH_V1_01 ? false : isTexWDataPresent; }
+    bool holdsRgbaData()   { return version > ROBLOX_MESH_V2_00 ? true  : isRgbaDataPresent; }
     bool holdsLodData()    { return isLodDataPresent;    }
     bool holdsBoneData()   { return isBoneDataPresent;   }
     bool holdsSubsetData() { return isSubsetDataPresent; }
@@ -38,7 +38,6 @@ public:
 
     RobloxMesh(const char* data);
     RobloxMesh(const char* data, RobloxMeshVersion version);
-    RobloxMesh(RobloxMeshSubset* subset);
 
     std::string write(RobloxMeshVersion version = ROBLOX_MESH_UNKNOWN);
 
@@ -53,6 +52,8 @@ private:
     bool isSubsetDataPresent = false; // Added in v4.00
     bool isFacsDataPresent   = false; // Added in v5.00
 
+    RobloxMesh(RobloxMeshSubset* subset);
+
     bool load(const char* data, bool detect = false);
 
     // v1.00, v1.01
@@ -62,6 +63,8 @@ private:
     // v2.00+
     bool loadBinary(std::istringstream& stream);
     void writeBinary(std::ostringstream& stream);
+
+    friend struct RobloxMeshSubset;
 };
 
 enum RobloxMeshVersion
@@ -116,7 +119,7 @@ struct RobloxMeshFace
 
 struct RobloxMeshBone
 {
-    const char* name;
+    std::string name;
 
     RobloxMeshBone* parent;
     RobloxMeshBone* lodParent;
@@ -189,15 +192,15 @@ struct RobloxMeshQuantizedTransforms
 // complex facial expression
 struct RobloxMeshTwoPoseCorrective
 {
-    const char* control0;
-    const char* control1;
+    std::string control0;
+    std::string control1;
 };
 
 struct RobloxMeshThreePoseCorrective
 {
-    const char* control0;
-    const char* control1;
-    const char* control2;
+    std::string control0;
+    std::string control1;
+    std::string control2;
 };
 
 } // namespace masher
