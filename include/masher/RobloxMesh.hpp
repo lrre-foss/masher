@@ -14,8 +14,7 @@
 #include <cstdint>
 #include <string>
 #include <sstream>
-#include <vector>
-
+#include <deque>
 #include "masher.h"
 #include "RobloxMeshSubset.hpp"
 
@@ -72,16 +71,16 @@ public:
 
     RobloxMeshOptimizer optimizer = OPTIMIZER_NONE;
 
-    std::vector<RobloxMeshVertex>* vertices;
-    std::vector<RobloxMeshFace>* faces;
-    std::vector<RobloxMeshBone>* bones;
-    std::vector<RobloxMeshSubset>* subsets;
-    std::vector<RobloxMesh>* lodMeshes;
+    std::deque<RobloxMeshVertex>* vertices;
+    std::deque<RobloxMeshFace>* faces;
+    std::deque<RobloxMeshBone>* bones;
+    std::deque<RobloxMeshSubset>* subsets;
+    std::deque<RobloxMesh>* lodMeshes;
 
     // FACS data
-    std::vector<RobloxMeshQuantizedMatrix>* quantizedMatrices;
-    std::vector<RobloxMeshTwoPoseCorrective>* twoPoseCorrectives;
-    std::vector<RobloxMeshThreePoseCorrective>* threePoseCorrectives;
+    std::deque<RobloxMeshQuantizedMatrix>* quantizedMatrices;
+    std::deque<RobloxMeshTwoPoseCorrective>* twoPoseCorrectives;
+    std::deque<RobloxMeshThreePoseCorrective>* threePoseCorrectives;
 
     bool holdsTexWData()   { return version > ROBLOX_MESH_V1_01 ? false : isTexWDataPresent; }
     bool holdsRgbaData()   { return version > ROBLOX_MESH_V2_00 ? true  : isRgbaDataPresent; }

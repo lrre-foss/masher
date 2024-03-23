@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vector>
+#include <deque>
 
 #include "RobloxMesh.hpp"
 
@@ -20,14 +20,14 @@ class RobloxMeshSubset
 public:
     RobloxMesh* mesh();
 
-    std::vector<RobloxMeshVertex>* vertices;
-    std::vector<RobloxMeshFace>* faces;
+    std::deque<RobloxMeshVertex>* vertices;
+    std::deque<RobloxMeshFace>* faces;
 
-    std::vector<RobloxMeshBone>* getBones();
-    void setBones(std::vector<RobloxMeshBone>* bones);
+    std::deque<RobloxMeshBone>* getBones();
+    void setBones(std::deque<RobloxMeshBone>* bones);
 
 private:
-    std::vector<RobloxMeshBone>* bones;
+    std::deque<RobloxMeshBone>* bones;
 };
 
 } // namespace masher

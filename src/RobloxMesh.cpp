@@ -107,8 +107,8 @@ bool RobloxMesh::loadText(std::istringstream& stream)
 {
     float scale = this->version == ROBLOX_MESH_V1_00 ? 0.5f : 1.0f;
 
-    this->vertices = new std::vector<RobloxMeshVertex>();
-    this->faces = new std::vector<RobloxMeshFace>();
+    this->vertices = new std::deque<RobloxMeshVertex>();
+    this->faces = new std::deque<RobloxMeshFace>();
 
     int numFaces;
     stream >> numFaces;
@@ -139,7 +139,14 @@ bool RobloxMesh::loadText(std::istringstream& stream)
         // 3 vertices per face
         for (int j = 0; j < 3; j++)
         {
-            RobloxMeshVertex vertex;
+            // create a new vertex directly in the deque
+            // weird pointer issues occur if you don't use a deque since once you do
+            // this->vertices->push_back(vertex), the pointer to the vertex is messed up
+            // this sucks and I wish I can use vectors so I will fix this at some point in
+            // the future. until then use the (eventual) c api ;)
+            this->vertices->emplace_back();
+            RobloxMeshVertex& vertex = this->vertices->back();
+
             for (int k = 0; k < 3; k++)
             {
                 std::string xStr, yStr, zStr;
@@ -189,8 +196,6 @@ bool RobloxMesh::loadText(std::istringstream& stream)
                     vertex.tw = z;
                 }
             }
-
-            this->vertices->push_back(vertex);
 
             if (j == 0)
                 face.a = &this->vertices->at(vertices->size() - 1);

@@ -15,12 +15,12 @@ RobloxMesh* RobloxMeshSubset::mesh()
     return mesh;
 }
 
-std::vector<RobloxMeshBone>* RobloxMeshSubset::getBones()
+std::deque<RobloxMeshBone>* RobloxMeshSubset::getBones()
 {
     return bones;
 }
 
-void RobloxMeshSubset::setBones(std::vector<RobloxMeshBone>* bones)
+void RobloxMeshSubset::setBones(std::deque<RobloxMeshBone>* bones)
 {
     if (bones->size() >= 26)
     {
