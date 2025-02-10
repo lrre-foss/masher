@@ -1,6 +1,6 @@
 #pragma once
 
-#include <deque>
+#include <vector>
 
 #include "RobloxMesh.hpp"
 
@@ -15,19 +15,18 @@ struct RobloxMeshBone;
 // not supporting >26 bones per mesh; thus, RobloxMeshSubsest just takes as many
 // bones as possible (but <26) and assigns them to a mesh with corresponding
 // verts/faces.
-class RobloxMeshSubset
-{
+class RobloxMeshSubset {
 public:
-    RobloxMesh* mesh();
+  RobloxMesh *mesh();
 
-    std::deque<RobloxMeshVertex>* vertices;
-    std::deque<RobloxMeshFace>* faces;
+  std::vector<RobloxMeshVertex> *vertices;
+  std::vector<RobloxMeshFace> *faces;
 
-    std::deque<RobloxMeshBone>* getBones();
-    void setBones(std::deque<RobloxMeshBone>* bones);
+  std::vector<RobloxMeshBone> *getBones();
+  void setBones(std::vector<RobloxMeshBone> *bones);
 
 private:
-    std::deque<RobloxMeshBone>* bones;
+  std::vector<RobloxMeshBone> *bones;
 };
 
 } // namespace masher
